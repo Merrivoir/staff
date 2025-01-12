@@ -72,7 +72,7 @@ function processAndDisplayData(data) {
     const userList = document.createElement("ul");
     users.forEach(user => {
       const listItem = document.createElement("li");
-      listItem.textContent = `${user.name} (${user.id}, Сумма: ${user.sum})`;
+      listItem.innerHTML = `<p>${user.name} (<a href="https://wa.me/send?phone=${user.id}">${user.id}</a>, Сумма: ${user.sum})<p>`;
       userList.appendChild(listItem);
     });
 
