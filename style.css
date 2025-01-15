@@ -13,7 +13,9 @@ body {
 
 table {
     width: 100%;
+    max-width: 600px;
     border-collapse: collapse;
+    margin-top: 20px;
   }
   th, td {
     border: 1px solid #ddd;
@@ -134,3 +136,46 @@ table {
     color: white;
     border-radius: 50%;
   }
+
+  .update-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+
+  /* Базовый стиль для иконок сортировки */
+.sort-icon {
+  display: inline-block;
+  margin-left: 5px;
+  width: 10px;
+  height: 10px;
+  visibility: hidden;
+}
+
+/* Стрелка вверх */
+.sort-icon.asc::after {
+  content: "▲";
+  font-size: 1em;
+  color: rgb(247, 160, 38);
+  display: inline-block;
+}
+
+/* Стрелка вниз */
+.sort-icon.desc::after {
+  content: "▼";
+  font-size: 1em;
+  color: rgb(247, 160, 38);
+  display: inline-block;
+}
+
+/* Видимость активной стрелки */
+th[data-active="true"] .sort-icon {
+  visibility: visible;
+}
