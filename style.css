@@ -32,6 +32,9 @@ table {
   
   /* Содержимое модального окна */
   .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -41,6 +44,7 @@ table {
   
   /* Спиннер */
   .spinner {
+    margin: 2vw auto;
     border: 8px solid #f3f3f3; /* Светлый фон */
     border-top: 8px solid #3498db; /* Синий цвет */
     border-radius: 50%;
@@ -48,7 +52,7 @@ table {
     height: 60px;
     animation: spin 1s linear infinite;
   }
-  
+
   /* Анимация спиннера */
   @keyframes spin {
     0% {
@@ -57,4 +61,69 @@ table {
     100% {
       transform: rotate(360deg);
     }
+  }
+  
+  .hidden { display: none; }
+  .list-container { margin-top: 20px; }
+  .list-group { margin-bottom: 20px; }
+  .list-group h3 { margin-bottom: 10px; }
+  .list-group ul { list-style-type: none; padding: 0; }
+  .list-group ul li { padding: 5px; border-bottom: 1px solid #ddd; }
+
+
+
+  .calendar-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .calendar-button {
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+  
+  .calendar-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    z-index: 1000;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  #calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f7f7f7;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  #calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  #calendar-table th,
+  #calendar-table td {
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  #calendar-table td:hover {
+    background-color: #f0f0f0;
+  }
+  
+  #calendar-table .selected {
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
   }

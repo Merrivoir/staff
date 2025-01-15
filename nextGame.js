@@ -1,11 +1,11 @@
 const apiUrl = "https://script.google.com/macros/s/AKfycby91-z85D_pFeXLdwJJ8Ht5b5IAZWPs_Xor8IECW8d443F4ol6YA_M9mWs9Tz8tmmTZ/exec"
-const loader = document.getElementById("loader");
-const listContainer = document.getElementById("list-container");
+const modal = document.getElementById("loadingModal")
+const listContainer = document.getElementById("list-container")
 
 async function fetchData() {
   try {
     // Показать индикатор загрузки
-    loader.classList.remove("hidden");
+    modal.style.display = "flex";
     listContainer.classList.add("hidden");
 
     // Отправляем запрос на сервер
@@ -14,15 +14,16 @@ async function fetchData() {
       throw new Error(`Ошибка HTTP: ${response.status}`);
     }
 
-    const data = await response.json();
-    processAndDisplayData(data);
+    const data = await response.json()
+
+    processAndDisplayData(data)
 
   } catch (error) {
     console.error("Ошибка загрузки данных:", error);
     alert("Не удалось загрузить данные.");
   } finally {
     // Скрыть индикатор загрузки
-    loader.classList.add("hidden");
+    modal.style.display = "none"
   }
 }
 
@@ -30,8 +31,8 @@ async function fetchData() {
 function processAndDisplayData(data) {
   listContainer.innerHTML = ""; // Очистить контейнер
   const date = Object.keys(data)[0];
-  const mainHead = document.getElementById('main')
-  mainHead.textContent = `Список на ${date}`
+  const calendar = document.getElementById('calendar')
+  calendar.textContent = `${date}`
   
   // Создать структуру для группировки по columnNames
   const groupedData = {};
@@ -69,14 +70,31 @@ function processAndDisplayData(data) {
     groupElement.appendChild(header);
 
     // Список пользователей
-    const userList = document.createElement("ul");
-    users.forEach(user => {
-      const listItem = document.createElement("li");
-      listItem.innerHTML = `<p>${user.name} (<a href="https://api.whatsapp.com/send?phone=${user.id}">${user.id}</a>, Сумма: ${user.sum})<p>`;
-      userList.appendChild(listItem);
-    });
+    const userTable = document.createElement("table");
+userTable.setAttribute("border", "1"); // добавляем рамку таблице для визуализации
 
-    groupElement.appendChild(userList);
+// Создаем заголовок таблицы
+const headerRow = document.createElement("tr");
+headerRow.innerHTML = `
+  <th>Имя</th>
+  <th>Номер телефона</th>
+  <th>Оплата</th>
+`;
+
+userTable.appendChild(headerRow);
+
+// Заполняем таблицу данными пользователей
+users.forEach(user => {
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${user.name}</td>
+    <td><a href="https://api.whatsapp.com/send?phone=${user.id}">${user.id}</a></td>
+    <td>${user.sum}</td>
+  `;
+  userTable.appendChild(row);
+});
+
+    groupElement.appendChild(userTable);
     listContainer.appendChild(groupElement);
   }
 

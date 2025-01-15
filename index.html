@@ -8,33 +8,26 @@
 	<link rel="manifest" href="favicon/site.webmanifest" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <title>RichMom Club</title>
-  <style>
-    .loader {
-      border: 4px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 4px solid #3498db;
-      width: 40px;
-      height: 40px;
-      animation: spin 2s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .hidden { display: none; }
-    .list-container { margin-top: 20px; }
-    .list-group { margin-bottom: 20px; }
-    .list-group h3 { margin-bottom: 10px; }
-    .list-group ul { list-style-type: none; padding: 0; }
-    .list-group ul li { padding: 5px; border-bottom: 1px solid #ddd; }
-  </style>
 </head>
 <body>
-  <h1 id="main">Список пользователей</h1>
-  <div id="loader" class="loader"></div>
-  <div id="list-container" class="list-container hidden"></div>
 
+  <h1 id="calendar"></h1>
+  
+  <div id="list-container" class="list-container hidden"></div>
+  
+  <div id="loadingModal" class="modal">
+    <div class="modal-content">
+      <div class="spinner"></div>
+      <p>Загрузка данных, пожалуйста, подождите...</p>
+    </div>
+  </div>
+  
   <script src="nextGame.js"></script>
+  <script src="calendar.js"></script>
+
 </body>
 </html>
