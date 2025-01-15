@@ -3,6 +3,14 @@ body {
     margin: 20px;
   }
 
+.list-container {
+  display: flex;
+  width: 90%;
+  min-width: 400px;
+  flex-direction: column;
+  margin: 10px auto;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -64,7 +72,6 @@ table {
   }
   
   .hidden { display: none; }
-  .list-container { margin-top: 20px; }
   .list-group { margin-bottom: 20px; }
   .list-group h3 { margin-bottom: 10px; }
   .list-group ul { list-style-type: none; padding: 0; }
