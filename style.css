@@ -72,14 +72,11 @@ table {
       transform: rotate(360deg);
     }
   }
-  
-  .hidden { display: none; }
+
   .list-group { margin-bottom: 20px; }
   .list-group h3 { margin-bottom: 10px; }
   .list-group ul { list-style-type: none; padding: 0; }
   .list-group ul li { padding: 5px; border-bottom: 1px solid #ddd; }
-
-
 
   .calendar-container {
     position: relative;
@@ -178,4 +175,8 @@ table {
 /* Видимость активной стрелки */
 th[data-active="true"] .sort-icon {
   visibility: visible;
+}
+
+th {
+  cursor: pointer;
 }
