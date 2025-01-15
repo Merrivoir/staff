@@ -2,14 +2,21 @@ const apiUrl = "https://script.google.com/macros/s/AKfycby91-z85D_pFeXLdwJJ8Ht5b
 const modal = document.getElementById("loadingModal")
 const listContainer = document.getElementById("list-container")
 
-async function fetchData() {
+async function fetchData(date = null) {
   try {
     // Показать индикатор загрузки
     modal.style.display = "flex";
     listContainer.classList.add("hidden");
 
     // Отправляем запрос на сервер
-    const response = await fetch(apiUrl);
+    let apiUrlWithDate = apiUrl;
+    if (date) {
+      const queryParams = new URLSearchParams({ date });
+      apiUrlWithDate = `${apiUrl}?${queryParams}`;
+    }
+
+    // Отправляем запрос на сервер
+    const response = await fetch(apiUrlWithDate);
     if (!response.ok) {
       throw new Error(`Ошибка HTTP: ${response.status}`);
     }
