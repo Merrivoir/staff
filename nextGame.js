@@ -39,7 +39,11 @@ function processAndDisplayData(data) {
   listContainer.innerHTML = ""; // Очистить контейнер
   const date = Object.keys(data)[0];
   const calendar = document.getElementById('calendar')
-  calendar.textContent = `${date}`
+  if (date) {
+    calendar.textContent = `${date}`
+  } else {
+    calendar.textContent = "Мероприятий нет"
+  }
   
   // Создать структуру для группировки по columnNames
   const groupedData = {};
