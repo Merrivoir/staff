@@ -6,9 +6,14 @@ body {
 .list-container {
   display: flex;
   width: 90%;
-  min-width: 400px;
+  min-width: 260px;
   flex-direction: column;
   margin: 10px auto;
+}
+
+.table-container {
+  overflow-x: auto; /* Добавление горизонтального скроллинга */
+  -webkit-overflow-scrolling: touch; /* Плавный скроллинг на мобильных устройствах */
 }
 
 table {

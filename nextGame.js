@@ -107,7 +107,10 @@ function processAndDisplayData(data) {
     const header = document.createElement("h3");
     header.textContent = columnName;
     groupElement.appendChild(header);
-
+    
+    const tableContainer = document.createElement("div");
+    tableContainer.classList.add('table-container')
+    
     const userTable = document.createElement("table");
     userTable.setAttribute("border", "1");
 
@@ -187,7 +190,8 @@ function processAndDisplayData(data) {
         header.querySelector(".sort-icon").classList.add(order);
       });
     });
-    groupElement.appendChild(userTable);
+    tableContainer.appendChild(userTable)
+    groupElement.appendChild(tableContainer)
     listContainer.appendChild(groupElement);
   }
 
