@@ -157,12 +157,21 @@ function processAndDisplayData(data) {
             return order === "asc" ? checkboxA - checkboxB : checkboxB - checkboxA;
           });
         } else {
-
           rows.sort((a, b) => {
             const aText = a.cells[columnIndex].innerText.trim();
             const bText = b.cells[columnIndex].innerText.trim();
-
-            return order === "asc" ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        
+            // Преобразуем текст в числа, если возможно
+            const aNumber = parseFloat(aText);
+            const bNumber = parseFloat(bText);
+        
+            // Проверяем, являются ли значения числами
+            if (!isNaN(aNumber) && !isNaN(bNumber)) {
+              return order === "asc" ? aNumber - bNumber : bNumber - aNumber;
+            } else {
+              // Если значения не числа, сортируем как строки
+              return order === "asc" ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            }
           });
         }
 
