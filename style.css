@@ -5,7 +5,7 @@ body {
 
 .list-container {
   display: flex;
-  width: 90%;
+  width: 96%;
   min-width: 260px;
   flex-direction: column;
   margin: 10px auto;
