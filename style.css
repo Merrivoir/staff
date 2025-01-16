@@ -153,7 +153,6 @@ table {
   margin-left: 5px;
   width: 10px;
   height: 10px;
-  visibility: hidden;
 }
 
 /* Стрелка вверх */
@@ -173,7 +172,7 @@ table {
 }
 
 /* Видимость активной стрелки */
-th[data-active="true"] .sort-icon {
+span.sort-icon.asc span.sort-icon.desc {
   visibility: visible;
 }
 

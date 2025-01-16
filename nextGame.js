@@ -15,7 +15,6 @@ async function fetchData(date = null) {
 
     if (localData) {
       modal.style.display = "none"
-      // Если есть локальные данные, отображаем их сразу
       console.log("Загружаем данные из локального хранилища");
       processAndDisplayData(localData);
       listContainer.classList.remove("hidden");
@@ -27,39 +26,33 @@ async function fetchData(date = null) {
       const queryParams = new URLSearchParams({ date });
       apiUrlWithDate = `${apiUrl}?${queryParams}`;
     }
-
-    // Отправляем запрос на сервер
     const response = await fetch(apiUrlWithDate);
     if (!response.ok) {
       throw new Error(`Ошибка HTTP: ${response.status}`);
     }
-
     const remoteData = await response.json()
 
     if (!localData || JSON.stringify(localData) !== JSON.stringify(remoteData)) {
-      console.log("Обновлены данные с сервера");
-      localStorage.setItem(localDataKey, JSON.stringify(remoteData)); // Сохраняем новые данные
-      processAndDisplayData(remoteData); // Отображаем новые данные
-      listContainer.classList.remove("hidden");
-
-      // Показываем уведомление об обновлении данных
-      showUpdateNotification();
+      console.log("Обновлены данные с сервера")
+      localStorage.setItem(localDataKey, JSON.stringify(remoteData)) // Сохраняем новые данные
+      processAndDisplayData(remoteData) // Отображаем новые данные
+      listContainer.classList.remove("hidden")
+      showUpdateNotification("Данные обновлены") // Показываем уведомление об обновлении данных
     } else {
       console.log("Данные актуальны, обновление не требуется.");
     }
 
   } catch (error) {
     console.error("Ошибка загрузки данных:", error);
-    alert("Не удалось загрузить данные.");
+    showUpdateNotification("Ошибка загрузки данных");
   } finally {
-    // Скрыть индикатор загрузки
     modal.style.display = "none"
   }
 }
 
-function showUpdateNotification() {
+function showUpdateNotification(text) {
   const notification = document.createElement("div");
-  notification.textContent = "Данные обновлены";
+  notification.textContent = text;
   notification.className = "update-notification";
   document.body.appendChild(notification);
 
@@ -73,13 +66,14 @@ function showUpdateNotification() {
 function processAndDisplayData(data) {
   listContainer.innerHTML = ""; // Очистить контейнер
   const date = Object.keys(data)[0];
-  const calendar = document.getElementById('calendar')
-  if (date) {
-    calendar.textContent = `Мероприятия на ${date}`
-  } else {
-    calendar.textContent = "Мероприятий нет"
-  }
+  const calendar = document.getElementById('calendar');
   
+  if (date) {
+    calendar.textContent = `Мероприятия на ${date}`;
+  } else {
+    calendar.textContent = "Мероприятий нет";
+  }
+
   // Создать структуру для группировки по columnNames
   const groupedData = {};
 
@@ -118,33 +112,64 @@ function processAndDisplayData(data) {
     // Список пользователей
     const userTable = document.createElement("table");
     userTable.setAttribute("border", "1");
-    userTable.setAttribute("id", "userTable") // добавляем рамку таблице для визуализации
+    userTable.classList.add("sortable-table"); // Класс для таблицы, чтобы добавлять обработчики событий
 
-// Создаем заголовок таблицы
-const headerRow = document.createElement("tr");
-headerRow.innerHTML = `
-<thead>
-  <th data-column="name" data-order="asc"><span>Имя</span><span class="sort-icon"></span></th>
-  <th data-column="id" data-order="asc"><span>Номер телефона</span><span class="sort-icon"></span></th>
-  <th data-column="sum" data-order="asc"><span>Оплата</span><span class="sort-icon"></span></th>
-</thead>
-`;
+    // Создаем заголовок таблицы
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    headerRow.innerHTML = ` 
+      <th data-column="name" data-order="asc"><span>Имя</span><span class="sort-icon"></span></th>
+      <th data-column="id" data-order="asc"><span>Номер телефона</span><span class="sort-icon"></span></th>
+      <th data-column="sum" data-order="asc"><span>Оплата</span><span class="sort-icon"></span></th>
+    `;
+    thead.appendChild(headerRow);
+    userTable.appendChild(thead);
 
-userTable.appendChild(headerRow);
-const tbody = document.createElement('tbody')
+    const tbody = document.createElement('tbody');
 
-// Заполняем таблицу данными пользователей
-users.forEach(user => {
-  const row = document.createElement("tr");
-  row.innerHTML = `
-    <td>${user.name}</td>
-    <td><a href="https://api.whatsapp.com/send?phone=${user.id}">${user.id}</a></td>
-    <td>${user.sum}</td>
-  `;
-  tbody.appendChild(row);
-});
+    // Заполняем таблицу данными пользователей
+    users.forEach(user => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${user.name}</td>
+        <td><a href="https://api.whatsapp.com/send?phone=${user.id}">${user.id}</a></td>
+        <td>${user.sum}</td>
+      `;
+      tbody.appendChild(row);
+    });
 
-userTable.appendChild(tbody)
+    userTable.appendChild(tbody);
+
+    // Внедряем обработчики сортировки
+    const headers = headerRow.querySelectorAll("th");
+    headers.forEach(header => {
+      header.addEventListener("click", () => {
+        const column = header.getAttribute("data-column");
+        const order = header.getAttribute("data-order") === "asc" ? "desc" : "asc";
+
+        // Сортировка строк таблицы
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const columnIndex = Array.from(headers).indexOf(header);
+
+        rows.sort((a, b) => {
+          const aText = a.cells[columnIndex].innerText.trim();
+          const bText = b.cells[columnIndex].innerText.trim();
+
+          return order === "asc" ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        });
+
+        // Перерисовываем строки
+        tbody.innerHTML = "";
+        rows.forEach(row => tbody.appendChild(row));
+
+        // Обновляем атрибут порядка
+        header.setAttribute("data-order", order);
+
+        // Обновляем визуализацию стрелок
+        headers.forEach(h => h.querySelector(".sort-icon").classList.remove("asc", "desc"));
+        header.querySelector(".sort-icon").classList.add(order);
+      });
+    });
 
     groupElement.appendChild(userTable);
     listContainer.appendChild(groupElement);
@@ -153,61 +178,6 @@ userTable.appendChild(tbody)
   listContainer.classList.remove("hidden");
 }
 
+
 // Вызов функции для загрузки данных
 fetchData();
-
-document.addEventListener("DOMContentLoaded", function () {
-  const table = document.getElementById("userTable");
-  const tbody = table.querySelector("tbody");
-  const thead = table.querySelector("thead");
-
-  // Делегируем события на thead
-  thead.addEventListener("click", function (event) {
-    const header = event.target.closest("th"); // Находим заголовок, на который кликнули
-    if (!header) return; // Если клик не на заголовок, выходим
-
-    const column = header.getAttribute("data-column");
-    const order = header.getAttribute("data-order");
-
-    if (!column) return; // Если у заголовка нет data-column, выходим
-
-    // Убираем активное состояние с других заголовков
-    const headers = thead.querySelectorAll("th");
-    headers.forEach(h => {
-      h.setAttribute("data-active", "false");
-      h.querySelector(".sort-icon").classList.remove("asc", "desc");
-    });
-
-    // Устанавливаем активное состояние текущему заголовку
-    header.setAttribute("data-active", "true");
-    const icon = header.querySelector(".sort-icon");
-    icon.classList.remove("asc", "desc");
-    icon.classList.add(order);
-
-    // Сортируем строки
-    const rows = Array.from(tbody.querySelectorAll("tr"));
-    const sortedRows = rows.sort((a, b) => {
-      const aText = a.querySelector(`td:nth-child(${getColumnIndex(column)})`).innerText.trim();
-      const bText = b.querySelector(`td:nth-child(${getColumnIndex(column)})`).innerText.trim();
-
-      if (order === "asc") {
-        return aText > bText ? 1 : -1;
-      } else {
-        return aText < bText ? 1 : -1;
-      }
-    });
-
-    // Удаляем старые строки и добавляем отсортированные
-    tbody.innerHTML = "";
-    sortedRows.forEach(row => tbody.appendChild(row));
-
-    // Меняем порядок сортировки для следующего клика
-    header.setAttribute("data-order", order === "asc" ? "desc" : "asc");
-  });
-
-  function getColumnIndex(column) {
-    const headers = Array.from(thead.querySelectorAll("th"));
-    const columns = headers.map(header => header.getAttribute("data-column"));
-    return columns.indexOf(column) + 1;
-  }
-});
