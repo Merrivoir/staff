@@ -67,24 +67,21 @@ function processAndDisplayData(data) {
   listContainer.innerHTML = ""; // Очистить контейнер
   const date = Object.keys(data)[0];
   const calendar = document.getElementById('calendar');
-  
+
   if (date) {
     calendar.textContent = `Мероприятия на ${date}`;
   } else {
     calendar.textContent = "Мероприятий нет";
   }
 
-  // Создать структуру для группировки по columnNames
   const groupedData = {};
-
-  // Итерация по датам
   for (const date in data) {
     const users = data[date];
     for (const userName in users) {
       const user = users[userName];
       user.events.forEach((columnName, index) => {
         const sum = user.sums[index];
-        if (sum !== "0") { // Только если значение не "0"
+        if (sum !== "0") {
           if (!groupedData[columnName]) {
             groupedData[columnName] = [];
           }
@@ -98,49 +95,49 @@ function processAndDisplayData(data) {
     }
   }
 
-  // Отображение данных
+  // Загружаем состояния чекбоксов для текущей даты
+  const checkboxStates = JSON.parse(localStorage.getItem("checkboxStates")) || {};
+  const savedStatesForDate = checkboxStates[date] || {};
+
   for (const columnName in groupedData) {
     const users = groupedData[columnName];
     const groupElement = document.createElement("div");
     groupElement.classList.add("list-group");
 
-    // Заголовок группы
     const header = document.createElement("h3");
     header.textContent = columnName;
     groupElement.appendChild(header);
 
-    // Список пользователей
     const userTable = document.createElement("table");
     userTable.setAttribute("border", "1");
-    userTable.classList.add("sortable-table"); // Класс для таблицы, чтобы добавлять обработчики событий
 
-    // Создаем заголовок таблицы
-    const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
-    headerRow.innerHTML = ` 
-      <th data-column="name" data-order="asc"><span>Имя</span><span class="sort-icon"></span></th>
-      <th data-column="id" data-order="asc"><span>Номер телефона</span><span class="sort-icon"></span></th>
-      <th data-column="sum" data-order="asc"><span>Оплата</span><span class="sort-icon"></span></th>
+    headerRow.innerHTML = `
+      <th>Имя</th>
+      <th>Номер телефона</th>
+      <th>Оплата</th>
+      <th>Отметка</th>
     `;
-    thead.appendChild(headerRow);
-    userTable.appendChild(thead);
-
+    userTable.appendChild(headerRow);
     const tbody = document.createElement('tbody');
 
-    // Заполняем таблицу данными пользователей
     users.forEach(user => {
       const row = document.createElement("tr");
+      const isChecked = savedStatesForDate[user.id] || false;
+
       row.innerHTML = `
         <td>${user.name}</td>
         <td><a href="https://api.whatsapp.com/send?phone=${user.id}">${user.id}</a></td>
         <td>${user.sum}</td>
+        <td class="center">
+          <input type="checkbox" class="user-checkbox" 
+                 data-user-id="${user.id}" ${isChecked ? "checked" : ""}>
+        </td>
       `;
       tbody.appendChild(row);
     });
 
     userTable.appendChild(tbody);
-
-    // Внедряем обработчики сортировки
     const headers = headerRow.querySelectorAll("th");
     headers.forEach(header => {
       header.addEventListener("click", () => {
@@ -170,13 +167,29 @@ function processAndDisplayData(data) {
         header.querySelector(".sort-icon").classList.add(order);
       });
     });
-
     groupElement.appendChild(userTable);
     listContainer.appendChild(groupElement);
   }
 
   listContainer.classList.remove("hidden");
+
+  // Добавляем обработчик изменения состояния чекбоксов
+  listContainer.addEventListener("change", function (event) {
+    if (event.target.classList.contains("user-checkbox")) {
+      const userId = event.target.getAttribute("data-user-id");
+      const isChecked = event.target.checked;
+
+      // Обновляем состояния в локальном хранилище для текущей даты
+      const checkboxStates = JSON.parse(localStorage.getItem("checkboxStates")) || {};
+      if (!checkboxStates[date]) {
+        checkboxStates[date] = {};
+      }
+      checkboxStates[date][userId] = isChecked;
+      localStorage.setItem("checkboxStates", JSON.stringify(checkboxStates));
+    }
+  });
 }
+
 
 
 // Вызов функции для загрузки данных
