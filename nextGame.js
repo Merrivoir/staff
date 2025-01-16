@@ -158,50 +158,56 @@ fetchData();
 
 document.addEventListener("DOMContentLoaded", function () {
   const table = document.getElementById("userTable");
-  const headers = table.querySelectorAll("th");
   const tbody = table.querySelector("tbody");
+  const thead = table.querySelector("thead");
 
-  headers.forEach(header => {
-    header.addEventListener("click", () => {
-      const column = header.getAttribute("data-column");
-      const order = header.getAttribute("data-order");
+  // Делегируем события на thead
+  thead.addEventListener("click", function (event) {
+    const header = event.target.closest("th"); // Находим заголовок, на который кликнули
+    if (!header) return; // Если клик не на заголовок, выходим
 
-      // Убираем активное состояние с других заголовков
-      headers.forEach(h => {
-        h.setAttribute("data-active", "false");
-        h.querySelector(".sort-icon").classList.remove("asc", "desc");
-      });
+    const column = header.getAttribute("data-column");
+    const order = header.getAttribute("data-order");
 
-      // Устанавливаем активное состояние текущему заголовку
-      header.setAttribute("data-active", "true");
-      const icon = header.querySelector(".sort-icon");
-      icon.classList.remove("asc", "desc");
-      icon.classList.add(order);
+    if (!column) return; // Если у заголовка нет data-column, выходим
 
-      // Сортируем строки
-      const rows = Array.from(tbody.querySelectorAll("tr"));
-      const sortedRows = rows.sort((a, b) => {
-        const aText = a.querySelector(`td:nth-child(${getColumnIndex(column)})`).innerText.trim();
-        const bText = b.querySelector(`td:nth-child(${getColumnIndex(column)})`).innerText.trim();
-
-        if (order === "asc") {
-          return aText > bText ? 1 : -1;
-        } else {
-          return aText < bText ? 1 : -1;
-        }
-      });
-
-      // Удаляем старые строки и добавляем отсортированные
-      tbody.innerHTML = "";
-      sortedRows.forEach(row => tbody.appendChild(row));
-
-      // Меняем порядок сортировки для следующего клика
-      header.setAttribute("data-order", order === "asc" ? "desc" : "asc");
+    // Убираем активное состояние с других заголовков
+    const headers = thead.querySelectorAll("th");
+    headers.forEach(h => {
+      h.setAttribute("data-active", "false");
+      h.querySelector(".sort-icon").classList.remove("asc", "desc");
     });
+
+    // Устанавливаем активное состояние текущему заголовку
+    header.setAttribute("data-active", "true");
+    const icon = header.querySelector(".sort-icon");
+    icon.classList.remove("asc", "desc");
+    icon.classList.add(order);
+
+    // Сортируем строки
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const sortedRows = rows.sort((a, b) => {
+      const aText = a.querySelector(`td:nth-child(${getColumnIndex(column)})`).innerText.trim();
+      const bText = b.querySelector(`td:nth-child(${getColumnIndex(column)})`).innerText.trim();
+
+      if (order === "asc") {
+        return aText > bText ? 1 : -1;
+      } else {
+        return aText < bText ? 1 : -1;
+      }
+    });
+
+    // Удаляем старые строки и добавляем отсортированные
+    tbody.innerHTML = "";
+    sortedRows.forEach(row => tbody.appendChild(row));
+
+    // Меняем порядок сортировки для следующего клика
+    header.setAttribute("data-order", order === "asc" ? "desc" : "asc");
   });
 
   function getColumnIndex(column) {
-    const columns = Array.from(headers).map(header => header.getAttribute("data-column"));
+    const headers = Array.from(thead.querySelectorAll("th"));
+    const columns = headers.map(header => header.getAttribute("data-column"));
     return columns.indexOf(column) + 1;
   }
 });
