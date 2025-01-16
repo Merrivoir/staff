@@ -116,7 +116,7 @@ function processAndDisplayData(data) {
       <th><span>Имя</span><span class="sort-icon"></span></th>
       <th><span>Номер телефона</span><span class="sort-icon"></span></th>
       <th><span>Оплата</span><span class="sort-icon"></span></th>
-      <th><span>Участие</span><span class="sort-icon"></span></th>
+      <th data-column="checkbox"><span>Участие</span><span class="sort-icon"></span></th>
     `;
     userTable.appendChild(headerRow);
     const tbody = document.createElement('tbody');
@@ -147,13 +147,24 @@ function processAndDisplayData(data) {
         // Сортировка строк таблицы
         const rows = Array.from(tbody.querySelectorAll("tr"));
         const columnIndex = Array.from(headers).indexOf(header);
+        
+        if (column === "checkbox") {
+          // Сортировка по состоянию чекбоксов
+          rows.sort((rowA, rowB) => {
+            const checkboxA = rowA.querySelector(".user-checkbox").checked ? 1 : 0;
+            const checkboxB = rowB.querySelector(".user-checkbox").checked ? 1 : 0;
 
-        rows.sort((a, b) => {
-          const aText = a.cells[columnIndex].innerText.trim();
-          const bText = b.cells[columnIndex].innerText.trim();
+            return order === "asc" ? checkboxA - checkboxB : checkboxB - checkboxA;
+          });
+        } else {
 
-          return order === "asc" ? aText.localeCompare(bText) : bText.localeCompare(aText);
-        });
+          rows.sort((a, b) => {
+            const aText = a.cells[columnIndex].innerText.trim();
+            const bText = b.cells[columnIndex].innerText.trim();
+
+            return order === "asc" ? aText.localeCompare(bText) : bText.localeCompare(aText);
+          });
+        }
 
         // Перерисовываем строки
         tbody.innerHTML = "";
@@ -189,8 +200,6 @@ function processAndDisplayData(data) {
     }
   });
 }
-
-
 
 // Вызов функции для загрузки данных
 fetchData();
