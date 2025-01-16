@@ -113,10 +113,10 @@ function processAndDisplayData(data) {
 
     const headerRow = document.createElement("tr");
     headerRow.innerHTML = `
-      <th>Имя</th>
-      <th>Номер телефона</th>
-      <th>Оплата</th>
-      <th>Отметка</th>
+      <th><span>Имя</span><span class="sort-icon"></span></th>
+      <th><span>Номер телефона</span><span class="sort-icon"></span></th>
+      <th><span>Оплата</span><span class="sort-icon"></span></th>
+      <th><span>Участие</span><span class="sort-icon"></span></th>
     `;
     userTable.appendChild(headerRow);
     const tbody = document.createElement('tbody');
