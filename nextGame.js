@@ -132,6 +132,7 @@ function processAndDisplayData(data) {
 
     const headerRow = document.createElement("tr");
     headerRow.innerHTML = `
+      <th><span>№ п/п</span></th>
       <th><span>Имя</span><span class="sort-icon"></span></th>
       <th><span>Номер телефона</span><span class="sort-icon"></span></th>
       <th><span>Оплата</span><span class="sort-icon"></span></th>
@@ -139,12 +140,13 @@ function processAndDisplayData(data) {
     `;
     userTable.appendChild(headerRow);
     const tbody = document.createElement('tbody');
-
+    let n = 1
     users.forEach(user => {
       const row = document.createElement("tr");
       const isChecked = savedStatesForDate[user.id] || false;
 
       row.innerHTML = `
+        <td class="center">${n}.</td>
         <td>${user.name}</td>
         <td><a href="https://api.whatsapp.com/send?phone=${user.id}">${user.id}</a></td>
         <td>${user.sum}</td>
@@ -154,6 +156,7 @@ function processAndDisplayData(data) {
         </td>
       `;
       tbody.appendChild(row);
+      n = n + 1
     });
 
     userTable.appendChild(tbody);
