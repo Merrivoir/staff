@@ -2,6 +2,7 @@ const apiUrl = "https://script.google.com/macros/s/AKfycby91-z85D_pFeXLdwJJ8Ht5b
 const modal = document.getElementById("loadingModal")
 const listContainer = document.getElementById("list-container")
 
+
 async function fetchData(date = null) {
   try {
     // Показать индикатор загрузки
@@ -12,34 +13,49 @@ async function fetchData(date = null) {
     }
     const localDataKey = `data_${date}`; // Уникальный ключ для хранения данных по дате
     const localData = JSON.parse(localStorage.getItem(localDataKey));
-
+    
     if (localData) {
       modal.style.display = "none"
       console.log("Загружаем данные из локального хранилища");
       processAndDisplayData(localData);
       listContainer.classList.remove("hidden");
     }
-
-    // Отправляем запрос на сервер
-    let apiUrlWithDate = apiUrl;
-    if (date) {
-      const queryParams = new URLSearchParams({ date });
-      apiUrlWithDate = `${apiUrl}?${queryParams}`;
-    }
-    const response = await fetch(apiUrlWithDate);
-    if (!response.ok) {
-      throw new Error(`Ошибка HTTP: ${response.status}`);
-    }
-    const remoteData = await response.json()
-
-    if (!localData || JSON.stringify(localData) !== JSON.stringify(remoteData)) {
-      console.log("Обновлены данные с сервера")
-      localStorage.setItem(localDataKey, JSON.stringify(remoteData)) // Сохраняем новые данные
-      processAndDisplayData(remoteData) // Отображаем новые данные
-      listContainer.classList.remove("hidden")
-      showUpdateNotification("Данные обновлены") // Показываем уведомление об обновлении данных
-    } else {
-      console.log("Данные актуальны, обновление не требуется.");
+    
+    const sync = document.getElementById('sync')
+    sync.classList.remove('hidden')
+    
+    try {
+      // Формируем URL с параметром даты, если указан
+      let apiUrlWithDate = apiUrl;
+      if (date) {
+        const queryParams = new URLSearchParams({ date });
+        apiUrlWithDate = `${apiUrl}?${queryParams}`;
+      }
+    
+      // Отправляем запрос на сервер
+      const response = await fetch(apiUrlWithDate);
+      if (!response.ok) {
+        throw new Error(`Ошибка HTTP: ${response.status}`);
+      }
+    
+      const remoteData = await response.json();
+    
+      // Проверяем изменения в данных
+      if (!localData || JSON.stringify(localData) !== JSON.stringify(remoteData)) {
+        console.log("Обновлены данные с сервера");
+        localStorage.setItem(localDataKey, JSON.stringify(remoteData)); // Сохраняем новые данные
+        processAndDisplayData(remoteData); // Отображаем новые данные
+        listContainer.classList.remove("hidden");
+        showUpdateNotification("Данные обновлены"); // Показываем уведомление об обновлении данных
+      } else {
+        console.log("Данные актуальны, обновление не требуется.");
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки данных:", error);
+      alert("Не удалось загрузить данные.");
+    } finally {
+      // Скрываем элемент sync после завершения запроса
+      sync.classList.add('hidden');
     }
 
   } catch (error) {
