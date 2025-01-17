@@ -132,7 +132,7 @@ function processAndDisplayData(data) {
 
     const headerRow = document.createElement("tr");
     headerRow.innerHTML = `
-      <th><span>№ п/п</span></th>
+      <th data-column="order"><span>№ п/п</span>><span class="sort-icon"></span></th>
       <th><span>Имя</span><span class="sort-icon"></span></th>
       <th><span>Номер телефона</span><span class="sort-icon"></span></th>
       <th><span>Оплата</span><span class="sort-icon"></span></th>
@@ -169,8 +169,10 @@ function processAndDisplayData(data) {
         // Сортировка строк таблицы
         const rows = Array.from(tbody.querySelectorAll("tr"));
         const columnIndex = Array.from(headers).indexOf(header);
-        
-        if (column === "checkbox") {
+        if (column === "order") {
+
+        }
+        else if (column === "checkbox") {
           // Сортировка по состоянию чекбоксов
           rows.sort((rowA, rowB) => {
             const checkboxA = rowA.querySelector(".user-checkbox").checked ? 1 : 0;
