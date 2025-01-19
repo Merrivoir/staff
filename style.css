@@ -5,7 +5,7 @@ body {
 
 .head {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   gap: 4%;
 }
@@ -14,6 +14,7 @@ body {
   border: 3px solid #f3f3f3; /* Светлый фон */
   border-top: 3px solid #3498db; /* Синий цвет */
   border-radius: 50%;
+  margin-top: 10px;
   width: 12px;
   height: 12px;
   animation: apple 1s linear infinite;
@@ -25,6 +26,7 @@ body {
   }
   100% {
     transform: rotate(360deg);
+    transform: scale3d();
   }
 }
 
@@ -97,19 +99,12 @@ th {
 /* Спиннер */
 .spinner {
   margin: 2vw auto;
-  border: 10px solid #f3f3f3; /* Светлый фон */
+  border: var(--bor) solid #f3f3f3; /* Светлый фон */
   border-top: var(--bor) solid #f24b4b; /* Синий цвет */
   border-radius: 50%;
   width: 40px;
   height: 40px;
   animation: spin 2s linear infinite;
-}
-
-.hexagon {
-  width: 100px;
-  height: 100px;
-  background-color: #8e44ad;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
   /* Анимация спиннера */
@@ -120,22 +115,18 @@ th {
     12.5% {
       transform: rotate(90deg);
       border-top: var(--bor) solid #ffa82e; /* Синий цвет */
-
     }
     25% {
       transform: rotate(180deg);
       border-top: var(--bor) solid #fff942; /* Синий цвет */
-
     }
     37.5% {
       transform: rotate(270deg);
       border-top: var(--bor) solid #84eb4d; /* Синий цвет */
-
     }
     50% {
       transform: rotate(360deg);
       border-top: var(--bor) solid #6be9fa; /* Синий цвет */
-
     }
     62.5% {
       transform: rotate(450deg);
@@ -144,7 +135,6 @@ th {
     75% {
       transform: rotate(540deg);
       border-top: var(--bor) solid #9b69ff; /* Синий цвет */
-
     }
     87.5% {
       transform: rotate(630deg);
@@ -155,11 +145,6 @@ th {
       border-top: var(--bor) solid #f76b9c; /* Синий цвет */
     }
   }
-
-  .list-group { margin-bottom: 20px; }
-  .list-group h3 { margin-bottom: 10px; }
-  .list-group ul { list-style-type: none; padding: 0; }
-  .list-group ul li { padding: 5px; border-bottom: 1px solid #ddd; }
 
   .calendar-container {
     position: relative;
@@ -221,7 +206,6 @@ th {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #4caf50;
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
@@ -229,6 +213,27 @@ th {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     z-index: 1000;
   }
+
+.red {
+  background-color: #ff441f;
+}
+
+.yellow {
+  background-color: #fcec07;
+}
+
+.green {
+  background-color: #4caf50;
+}
+
+.gray {
+  background-color: #ddd;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
 
   /* Базовый стиль для иконок сортировки */
 .sort-icon {

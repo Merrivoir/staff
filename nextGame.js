@@ -49,6 +49,7 @@ async function fetchData(date = null) {
         showUpdateNotification("Данные обновлены"); // Показываем уведомление об обновлении данных
       } else {
         console.log("Данные актуальны, обновление не требуется.");
+        showUpdateNotification("Данные актуальны");
       }
     } catch (error) {
       console.error("Ошибка загрузки данных:", error);
@@ -66,15 +67,33 @@ async function fetchData(date = null) {
   }
 }
 
-function showUpdateNotification(text) {
+function showUpdateNotification(text, level=0) {
+  
+  switch (level) {
+    case 0:
+      back = "green"
+      break
+    case 1:
+      back = "yellow"
+      break
+    case 2:
+      back = "red"
+      break
+    default:
+      back = "gray"
+  }
+
   const notification = document.createElement("div");
   notification.textContent = text;
-  notification.className = "update-notification";
+  notification.className = `update-notification ${back}`;
   document.body.appendChild(notification);
 
-  // Убираем уведомление через 3 секунды
   setTimeout(() => {
-    notification.remove();
+    notification.classList.add("fade-out");
+    // Удаляем элемент после завершения анимации
+    setTimeout(() => {
+      notification.remove();
+    }, 500); // Время должно совпадать с длительностью transition
   }, 3000);
 }
 
