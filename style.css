@@ -10,6 +10,12 @@ body {
   gap: 4%;
 }
 
+#sync-container {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
 #sync {
   border: 3px solid #f3f3f3; /* Светлый фон */
   border-top: 3px solid #3498db; /* Синий цвет */
@@ -168,7 +174,7 @@ th {
   }
   
   .hidden {
-    display: none;
+    display: none !important;
   }
   
   #calendar-header {

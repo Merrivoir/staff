@@ -21,7 +21,7 @@ async function fetchData(date = null) {
       listContainer.classList.remove("hidden");
     }
     
-    const sync = document.getElementById('sync')
+    const sync = document.getElementById('sync-container')
     sync.classList.remove('hidden')
     
     try {
