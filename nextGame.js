@@ -93,7 +93,7 @@ function showUpdateNotification(text, level=0) {
     // Удаляем элемент после завершения анимации
     setTimeout(() => {
       notification.remove();
-    }, 500); // Время должно совпадать с длительностью transition
+    }, 800); // Время должно совпадать с длительностью transition
   }, 3000);
 }
 
