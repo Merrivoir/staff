@@ -132,7 +132,7 @@ function processAndDisplayData(data) {
 
     const headerRow = document.createElement("tr");
     headerRow.innerHTML = `
-      <th data-column="order"><span>№ п/п</span>><span class="sort-icon"></span></th>
+      <th data-column="order"><span>№ п/п</span><span class="sort-icon"></span></th>
       <th><span>Имя</span><span class="sort-icon"></span></th>
       <th><span>Номер телефона</span><span class="sort-icon"></span></th>
       <th><span>Оплата</span><span class="sort-icon"></span></th>
