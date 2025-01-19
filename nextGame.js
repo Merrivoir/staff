@@ -169,10 +169,8 @@ function processAndDisplayData(data) {
         // Сортировка строк таблицы
         const rows = Array.from(tbody.querySelectorAll("tr"));
         const columnIndex = Array.from(headers).indexOf(header);
-        if (column === "order") {
-
-        }
-        else if (column === "checkbox") {
+        
+        if (column === "checkbox") {
           // Сортировка по состоянию чекбоксов
           rows.sort((rowA, rowB) => {
             const checkboxA = rowA.querySelector(".user-checkbox").checked ? 1 : 0;
