@@ -1,42 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
-	<link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
-	<link rel="shortcut icon" href="favicon/favicon.ico" />
-	<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
-	<link rel="manifest" href="favicon/site.webmanifest" />
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <title>RichMom Club</title>
+    <!-- Существующие метатеги и стили -->
+    <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+    <link rel="shortcut icon" href="favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="favicon/site.webmanifest" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <title>Richmom Club Events</title>
+    
+    <!-- Стиль для формы входа -->
+    <style>
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
-
-  <div class="head">
-    <h1 id="calendar"></h1>
-    <div id="sync-container" class="hidden">
-      <div id="sync"></div>
-      <span id="sync-label">Актуализация...</span>
-    </div> 
-  </div>
-  
-  <div id="list-container" class="list-container hidden"></div>
-  
-  <div id="loadingModal" class="modal">
-    <div class="modal-content">
-      <div class="spinner"></div>
-      <div class="hexagon" style="display:none"></div>
-      <p>Загрузка данных, пожалуйста, подождите...</p>
+    <!-- Контейнер для контента (изначально скрыт) -->
+    <div id="content" class="hidden">
+        <button id="logoutBtn" class="logout-btn">Выйти</button>
+        
+        <div class="head">
+            <h1 id="calendar"></h1>
+            <div id="sync-container" class="hidden">
+                <div id="sync"></div>
+                <span id="sync-label">Актуализация...</span>
+            </div> 
+        </div>
+        
+        <div id="list-container" class="list-container hidden"></div>
     </div>
-  </div>
-  
-  <script src="nextGame.js"></script>
-  <script src="calendar.js"></script>
-  <script src="misc.js"></script>
 
+    <!-- Форма входа -->
+    <div id="loginContainer" class="login-container">
+        <h2>Для доступа требуется авторизация</h2>
+        <script async 
+                src="https://telegram.org/js/telegram-widget.js?7" 
+                data-telegram-login="richmom_auth_bot"
+                data-size="large" 
+                data-auth-url="https://richmom.vercel.app/auth"
+                data-request-access="write">
+        </script>
+        <p id="loginStatus" style="color: red; margin-top: 20px;"></p>
+    </div>
 
+    <!-- Модальное окно -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <div class="spinner"></div>
+            <div class="hexagon" style="display:none"></div>
+            <p>Загрузка данных, пожалуйста, подождите...</p>
+        </div>
+    </div>
+
+    <!-- Скрипты -->
+    <script>
+        // Проверка авторизации при загрузке
+        async function checkAuth() {
+            const token = localStorage.getItem('jwt');
+            const loginStatus = document.getElementById('loginStatus');
+            
+            if (!token) {
+                document.getElementById('content').classList.add('hidden');
+                document.getElementById('loginContainer').classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch('https://richmom.vercel.app/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.user) {
+                    document.getElementById('content').classList.remove('hidden');
+                    document.getElementById('loginContainer').classList.add('hidden');
+                } else {
+                    localStorage.removeItem('jwt');
+                    loginStatus.textContent = 'Сессия истекла. Пожалуйста, войдите снова.';
+                }
+            } catch (error) {
+                console.error('Ошибка проверки:', error);
+                loginStatus.textContent = 'Ошибка подключения к серверу';
+            }
+        }
+
+        // Обработчик выхода
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('jwt');
+            window.location.reload();
+        });
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+
+    <script src="nextGame.js"></script>
+    <script src="calendar.js"></script>
+    <script src="misc.js"></script>
 </body>
 </html>
