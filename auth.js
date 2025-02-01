@@ -1,3 +1,12 @@
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get('token');
+
+if (token) {
+    // Удаляем токен из URL
+    window.history.replaceState({}, '', window.location.pathname);
+    localStorage.setItem('jwt', token);
+}
+
 class AuthManager {
     constructor() {
         this.init();
@@ -61,7 +70,7 @@ class AuthManager {
 
     redirectToAuth() {
         const currentSite = encodeURIComponent(window.location.href);
-        window.location.href = `https://richmom.vercel.app/login.html?source=${currentSite}`;
+        window.location.href = `https://richmom.vercel.app/index.html?source=${currentSite}`;
     }
 }
 

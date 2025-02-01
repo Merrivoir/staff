@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Существующие метатеги и стили -->
     <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
     <link rel="shortcut icon" href="favicon/favicon.ico" />
@@ -12,13 +13,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <title>Richmom Club Events</title>
+    
+    <!-- Стиль для скрытия контента до проверки -->
+    <style>
+        .pre-auth {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Контейнер для контента -->
-    <div id="content" class="">
-        <button id="logoutBtn" class="logout-btn">Выйти</button>
-        
+    <!-- Контейнер для контента (скрыт до проверки) -->
+    <div id="content" class="pre-auth">
         <div class="head">
             <h1 id="calendar"></h1>
             <div id="sync-container" class="hidden">
@@ -26,21 +32,7 @@
                 <span id="sync-label">Актуализация...</span>
             </div> 
         </div>
-        
         <div id="list-container" class="list-container hidden"></div>
-    </div>
-
-    <!-- Форма входа -->
-    <div id="loginContainer" class="login-container hidden">
-        <h2>Для доступа требуется авторизация</h2>
-        <script async 
-                src="https://telegram.org/js/telegram-widget.js?7" 
-                data-telegram-login="richmom_auth_bot"
-                data-size="large" 
-                data-auth-url="https://richmom.vercel.app/auth"
-                data-request-access="write">
-        </script>
-        <p id="loginStatus" style="color: red; margin-top: 20px;"></p>
     </div>
 
     <!-- Модальное окно -->
@@ -52,10 +44,49 @@
         </div>
     </div>
     
-    <script src="auth.js"></script>
-    <script src="nextGame.js"></script>
-    <script src="calendar.js"></script>
-    <script src="misc.js"></script>
+    <!-- Скрипт проверки авторизации -->
+    <script>
+        (async function initAuth() {
+            const token = localStorage.getItem('jwt');
+            const authServerURL = 'https://your-auth-server.vercel.app/verify';
+            const loginURL = 'https://richmom.vercel.app';
 
+            try {
+                if (!token) throw new Error('No token found');
+
+                // Проверка токена
+                const response = await fetch(authServerURL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Invalid token');
+                
+                // Показываем контент
+                document.getElementById('content').classList.remove('pre-auth');
+                
+                // Динамически загружаем основные скрипты
+                await loadScript('nextGame.js');
+                await loadScript('calendar.js');
+                await loadScript('misc.js');
+
+            } catch (error) {
+                console.error('Auth error:', error);
+                window.location.href = `${loginURL}?source=${encodeURIComponent(window.location.href)}`;
+            }
+
+            function loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.body.appendChild(script);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
