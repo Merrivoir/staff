@@ -101,7 +101,7 @@ function showUpdateNotification(text, level=0) {
 function processAndDisplayData(data) {
   listContainer.innerHTML = ""; // Очистить контейнер
   const date = Object.keys(data)[0];
-  const calendar = document.getElementById('calendar');
+  const calendar = document.getElementById('event');
 
   if (date) {
     calendar.textContent = `Мероприятия на ${date}`;
