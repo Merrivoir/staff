@@ -104,7 +104,7 @@ function processAndDisplayData(data) {
   const calendar = document.getElementById('event');
 
   if (date) {
-    calendar.textContent = `Мероприятия на ${date}`;
+    calendar.textContent = `Мероприятия на:`;
   } else {
     calendar.textContent = "Мероприятий нет";
   }

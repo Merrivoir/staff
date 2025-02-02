@@ -184,61 +184,18 @@ th {
       border-top: var(--bor) solid #f76b9c; /* Синий цвет */
     }
   }
+  #event {
+    font-size: 1.6rem;
+  }
 
-  .calendar-container {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .calendar-button {
-    padding: 10px 15px;
-    cursor: pointer;
-  }
-  
-  .calendar-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: white;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    z-index: 1000;
+  input#calendar {
+    text-align: center;
+    font-size: 1.6rem;
+    border: none;
   }
   
   .hidden {
     display: none !important;
-  }
-  
-  #calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background: #f7f7f7;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  #calendar-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  #calendar-table th,
-  #calendar-table td {
-    text-align: center;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  #calendar-table td:hover {
-    background-color: #f0f0f0;
-  }
-  
-  #calendar-table .selected {
-    background-color: #007bff;
-    color: white;
-    border-radius: 50%;
   }
 
   .update-notification {
