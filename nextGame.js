@@ -141,6 +141,7 @@ function processAndDisplayData(data) {
 
     const header = document.createElement("h3");
     header.textContent = columnName;
+    header.classList.add('subhead')
     groupElement.appendChild(header);
     
     const tableContainer = document.createElement("div");

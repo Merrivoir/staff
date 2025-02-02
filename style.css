@@ -43,6 +43,11 @@ body {
   gap: 4%;
 }
 
+.subhead {
+  margin: 1rem auto;
+  text-align: center;
+}
+
 #sync-container {
   display: flex;
   gap: 10px;
@@ -80,12 +85,15 @@ body {
 .table-container {
   overflow-x: auto; /* Добавление горизонтального скроллинга */
   -webkit-overflow-scrolling: touch; /* Плавный скроллинг на мобильных устройствах */
+  width: 100%;
+  display: flex;
 }
 
 table {
   width: 100%;
   max-width: 600px;
   border-collapse: collapse;
+  margin: auto;
 }
 
 th, td {
