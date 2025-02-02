@@ -40,7 +40,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4%;
+  gap: 0.6rem;
 }
 
 .subhead {
@@ -196,7 +196,8 @@ th {
     font-size: 1.6rem;
   }
 
-  input#calendar {
+  input#calendar,
+  .flatpickr-mobile {
     text-align: center;
     font-size: 1.6rem;
     border: none;
