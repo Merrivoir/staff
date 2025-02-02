@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+
     const calendarInput = document.getElementById("calendar")
     flatpickr(calendarInput, {
       dateFormat: "Y-m-d", // Формат даты: Год-месяц-день
@@ -8,4 +8,3 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchData(dateStr)
       },
     });
-  });
