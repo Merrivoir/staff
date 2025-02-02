@@ -51,6 +51,10 @@
             const authServerURL = 'https://richmom.vercel.app/verify';
             const loginURL = 'https://richmom.vercel.app';
 
+            if (!token) {
+                token = getTokenFromUrl();
+            }
+
             try {
                 if (!token) throw new Error('No token found');
 
@@ -85,6 +89,11 @@
                     script.onerror = reject;
                     document.body.appendChild(script);
                 });
+            }
+
+            function getTokenFromUrl() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('token');
             }
         })();
     </script>
