@@ -67,7 +67,8 @@
         });
 
         if (!response.ok) throw new Error('Invalid token');
-                
+        // Сохраняем токен
+        localStorage.setItem('jwt', token);
         // Показываем контент
         document.getElementById('content').classList.remove('pre-auth');
                 
