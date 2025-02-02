@@ -152,11 +152,11 @@ function processAndDisplayData(data) {
 
     const headerRow = document.createElement("tr");
     headerRow.innerHTML = `
-      <th data-column="order"><span>№ п/п</span><span class="sort-icon"></span></th>
+      <th data-column="checkbox"><span>Участие</span><span class="sort-icon"></span></th>
       <th><span>Имя</span><span class="sort-icon"></span></th>
       <th><span>Номер телефона</span><span class="sort-icon"></span></th>
       <th><span>Оплата</span><span class="sort-icon"></span></th>
-      <th data-column="checkbox"><span>Участие</span><span class="sort-icon"></span></th>
+      <th data-column="order"><span>№ п/п</span><span class="sort-icon"></span></th>
     `;
     userTable.appendChild(headerRow);
     const tbody = document.createElement('tbody');
@@ -166,14 +166,14 @@ function processAndDisplayData(data) {
       const isChecked = savedStatesForDate[user.id] || false;
 
       row.innerHTML = `
-        <td class="center">${n}.</td>
+        <td class="center">
+          <input type="checkbox" class="user-checkbox" 
+            data-user-id="${user.id}" ${isChecked ? "checked" : ""}>
+        </td>
         <td>${user.name}</td>
         <td><a href="https://api.whatsapp.com/send?phone=${user.id}">${user.id}</a></td>
         <td>${user.sum}</td>
-        <td class="center">
-          <input type="checkbox" class="user-checkbox" 
-                 data-user-id="${user.id}" ${isChecked ? "checked" : ""}>
-        </td>
+        <td class="center">${n}.</td>
       `;
       tbody.appendChild(row);
       n = n + 1
