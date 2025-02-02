@@ -47,7 +47,7 @@
     <!-- Скрипт проверки авторизации -->
     <script>
         (async function initAuth() {
-            const token = localStorage.getItem('jwt');
+            let token = localStorage.getItem('jwt');
             const authServerURL = 'https://richmom.vercel.app/verify';
             const loginURL = 'https://richmom.vercel.app';
 
