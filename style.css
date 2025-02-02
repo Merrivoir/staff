@@ -46,6 +46,7 @@ body {
 .subhead {
   margin: 1rem auto;
   text-align: center;
+  font-size: 1.8rem;
 }
 
 #sync-container {
