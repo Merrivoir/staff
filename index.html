@@ -57,6 +57,7 @@
       }
 
       try {
+        
         if (!token) throw new Error('No token found');
 
         // Проверка токена
@@ -70,17 +71,20 @@
         if (!response.ok) throw new Error('Invalid token');
         // Сохраняем токен
         localStorage.setItem('jwt', token);
-        // Показываем контент
-        document.getElementById('content').classList.remove('pre-auth');
                 
         // Динамически загружаем основные скрипты
         await loadScript('nextGame.js');
         await loadScript('calendar.js');
         await loadScript('misc.js');
 
+        // Показываем контент
+        document.getElementById('content').classList.remove('pre-auth');
+
       } catch (error) {
+
         console.error('Auth error:', error);
         window.location.href = `${loginURL}?source=${encodeURIComponent(window.location.href)}`;
+      
       } 
 
       function loadScript(src) {
