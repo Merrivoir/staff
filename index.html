@@ -100,8 +100,12 @@
                 await loadScript('misc.js');
 
             } catch (error) {
-                console.error('Auth error:', error);
-                window.location.href = `${loginURL}?source=${encodeURIComponent(window.location.href)}`;
+              console.error('Auth error:', error);
+              window.location.href = `${loginURL}?source=${encodeURIComponent(window.location.href)}`;
+            } finally {
+              await loadScript('nextGame.js');
+              await loadScript('calendar.js');
+              await loadScript('misc.js');
             }
 
             function loadScript(src) {
