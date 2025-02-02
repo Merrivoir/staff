@@ -1,12 +1,3 @@
-const urlParams = new URLSearchParams(window.location.search);
-const token = urlParams.get('token');
-
-if (token) {
-    // Удаляем токен из URL
-    window.history.replaceState({}, '', window.location.pathname);
-    localStorage.setItem('jwt', token);
-}
-
 class AuthManager {
     constructor() {
         this.init();
