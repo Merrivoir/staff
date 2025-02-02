@@ -23,27 +23,50 @@
 </head>
 
 <body>
-    <!-- Контейнер для контента (скрыт до проверки) -->
-    <div id="content" class="pre-auth">
-        <div class="head">
-            <h1 id="calendar"></h1>
-            <div id="sync-container" class="hidden">
-                <div id="sync"></div>
-                <span id="sync-label">Актуализация...</span>
-            </div> 
-        </div>
-        <div id="list-container" class="list-container hidden"></div>
+  <!-- Контейнер для контента (скрыт до проверки) -->
+  <div id="content" class="pre-auth">
+    <div class="head">
+      <h1 id="calendar"></h1>
+      <div id="sync-container" class="hidden">
+        <div id="sync"></div>
+        <span id="sync-label">Актуализация...</span>
+      </div> 
     </div>
+    <div id="list-container" class="list-container hidden"></div>
+  </div>
 
-    <!-- Модальное окно -->
-    <div id="loadingModal" class="modal">
-        <div class="modal-content">
-            <div class="spinner"></div>
-            <div class="hexagon" style="display:none"></div>
-            <p>Загрузка данных, пожалуйста, подождите...</p>
-        </div>
+  <!-- Модальное окно -->
+  <div id="loadingModal" class="modal">
+    <div class="modal-content">
+      <div class="spinner"></div>
+      <div class="hexagon" style="display:none"></div>
+      <p>Загрузка данных, пожалуйста, подождите...</p>
     </div>
+  </div>
     
+  <script>
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE5MTIzNjUxNDgiLCJyb2xlIjoiYWRtaW4iLCJ1c2VybmFtZSI6Ik1lcnJpdm9pciIsImlhdCI6MTczODQ1OTc5MiwiZXhwIjoxNzM4NTQ2MTkyfQ.4lMcL9RDUwYpR4In5g0K_zQSJZuq0Isi46E5G_0C-e8");
+
+    const graphql = JSON.stringify({
+      query: "",
+      variables: {}
+    })
+    
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: graphql,
+      redirect: "follow"
+    };
+
+    fetch("richmom.vercel.app/verify", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
+  </script>
+
     <!-- Скрипт проверки авторизации -->
     <script>
         (async function initAuth() {
@@ -80,26 +103,6 @@
                 console.error('Auth error:', error);
                 window.location.href = `${loginURL}?source=${encodeURIComponent(window.location.href)}`;
             }
-
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-            myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE5MTIzNjUxNDgiLCJyb2xlIjoiYWRtaW4iLCJ1c2VybmFtZSI6Ik1lcnJpdm9pciIsImlhdCI6MTczODQ1OTc5MiwiZXhwIjoxNzM4NTQ2MTkyfQ.4lMcL9RDUwYpR4In5g0K_zQSJZuq0Isi46E5G_0C-e8");
-
-            const graphql = JSON.stringify({
-                query: "",
-                variables: {}
-            })
-            const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: graphql,
-                redirect: "follow"
-            };
-
-            fetch("richmom.vercel.app/verify", requestOptions)
-                .then((response) => response.text())
-                .then((result) => console.log(result))
-                .catch((error) => console.error(error));
 
             function loadScript(src) {
                 return new Promise((resolve, reject) => {
