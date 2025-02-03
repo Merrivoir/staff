@@ -7,7 +7,6 @@
       defaultDate: new Date(),
       firstDayOfWeek: 1,
       enableTime: false,
-      weekNumbers: true,
       onChange: function (selectedDates, dateStr, instance) {
         console.log("Выбрана дата:", dateStr)
         fetchData(dateStr)
