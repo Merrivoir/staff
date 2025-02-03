@@ -2,7 +2,7 @@
     const calendarInput = document.getElementById("calendar")
 
     flatpickr(calendarInput, {
-      dateFormat: "d.m.Y",
+      dateFormat: "Y-m-d",
       defaultDate: new Date(),
       firstDayOfWeek: 1,
       enableTime: false,
