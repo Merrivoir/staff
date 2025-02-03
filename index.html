@@ -49,12 +49,12 @@
   <!-- Скрипт проверки авторизации -->
   <script>
     (async function initAuth() {
-      let token = localStorage.getItem('jwt');
+      let token = getTokenFromUrl();
       const authServerURL = 'https://richmom.vercel.app/verify';
       const loginURL = 'https://richmom.vercel.app';
 
       if (!token) {
-        token = getTokenFromUrl();
+        token = localStorage.getItem('jwt');
       }
 
       try {
