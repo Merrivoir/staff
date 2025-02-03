@@ -24,6 +24,15 @@
 </head>
 
 <body>
+
+  <header class="site-header">
+    <div class="user-info hidden">
+      <img class="user-avatar" src="" alt="Аватар">
+      <span class="user-name"></span>
+      <button class="logout-btn">Выйти</button>
+    </div>
+  </header>
+  
   <!-- Контейнер для контента (скрыт до проверки) -->
   <div id="content" class="pre-auth">
     <div class="head">
@@ -48,6 +57,27 @@
     
   <!-- Скрипт проверки авторизации -->
   <script>
+    function showUserHeader(user) {
+      const header = document.querySelector('.user-info');
+      const avatar = document.querySelector('.user-avatar');
+      const name = document.querySelector('.user-name');
+
+      if (!header || !avatar || !name) {
+        console.error('User header elements not found!');
+        return;
+      }
+
+    // Проверка и установка аватара
+    avatar.src = user.photo_url || 'https://via.placeholder.com/40';
+    avatar.alt = `Аватар ${user.first_name || user.username}`;
+
+    // Приоритет имён: first_name > username > ID
+    name.textContent = user.first_name || user.username || `User #${user.id}`;
+
+    // Показываем блок
+    header.classList.remove('hidden');
+    }
+
     (async function initAuth() {
       let token = getTokenFromUrl();
       const authServerURL = 'https://richmom.vercel.app/verify';
@@ -69,17 +99,46 @@
           }
         });
 
-        if (!response.ok) throw new Error('Invalid token');
-        // Сохраняем токен
-        localStorage.setItem('jwt', token);
-                
-        // Динамически загружаем основные скрипты
-        await loadScript('nextGame.js');
-        await loadScript('calendar.js');
-        await loadScript('misc.js');
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          throw new Error(errorData?.message || `HTTP error! status: ${response.status}`);
+        } else {
 
-        // Показываем контент
-        document.getElementById('content').classList.remove('pre-auth');
+          // Сохраняем токен
+          localStorage.setItem('jwt', token);
+  
+          // Получаем данные пользователя из ответа
+          const result = await response.json();
+  
+          // Проверяем структуру ответа
+          if (result.valid && result.user) {
+            // Показываем шапку с данными пользователя
+            showUserHeader(result.user);
+          } else {
+            throw new Error('Invalid server response');
+          }
+
+          // Сохраняем токен
+          localStorage.setItem('jwt', token);
+                  
+          // Динамически загружаем основные скрипты
+          await loadScript('nextGame.js');
+          await loadScript('calendar.js');
+          await loadScript('misc.js');
+
+          // Показываем контент
+          document.getElementById('content').classList.remove('pre-auth');
+          // Добавляем обработчик кнопки выхода
+          const logoutBtn = document.querySelector('.logout-btn');
+          if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+              localStorage.removeItem('jwt');
+              window.location.href = `${loginURL}?source=${encodeURIComponent(window.location.href)}`;
+            });
+          } else {
+            console.error('Logout button not found');
+          }
+        }
 
       } catch (error) {
 
