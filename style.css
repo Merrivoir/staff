@@ -118,6 +118,18 @@ table {
   background-color: #f4f4f4;
 }
 
+.wrap {
+  width: min-content;
+}
+
+.cell-content {
+  margin: 0.1rem 0;
+}
+
+.phone {
+  font-size: 0.86rem;
+}
+
 .center {
   text-align: center;
 }

@@ -53,8 +53,9 @@ function crUsers(users, date) {
     const isChecked = savedStatesForDate[user.id] || false;
   
     // Создаём ячейку с чекбоксом
+    const div1 = createDiv();
+    div1.classList.add('center')
     const tdCheckbox = document.createElement('td');
-    tdCheckbox.classList.add('center');
   
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -63,22 +64,34 @@ function crUsers(users, date) {
     if (isChecked) {
       checkbox.checked = true;
     }
-    tdCheckbox.appendChild(checkbox);
-  
+
+    div1.appendChild(checkbox);
+    tdCheckbox.appendChild(div1);
+
     // Создаём ячейку с именем
+    const div2 = createDiv();
+    div2.classList.add('wrap')
     const tdName = document.createElement('td');
-    tdName.textContent = user.name;
+    div2.textContent = user.name;
+    tdName.appendChild(div2);
   
     // Создаём ячейку с номером телефона и ссылкой на WhatsApp
+    const div3 = createDiv();
+    div3.classList.add('phone')
+    div3.classList.add('center')
     const tdPhone = document.createElement('td');
     const phoneLink = document.createElement('a');
     phoneLink.href = `https://api.whatsapp.com/send?phone=${user.id}`;
     phoneLink.textContent = user.id;
-    tdPhone.appendChild(phoneLink);
+    div3.appendChild(phoneLink);
+    tdPhone.appendChild(div3);
   
     // Создаём ячейку с суммой оплаты
+    const div4 = createDiv();
+    div4.classList.add('center');
     const tdSum = document.createElement('td');
-    tdSum.textContent = user.sum;
+    div4.textContent = user.sum;
+    tdSum.appendChild(div4)
   
     // Добавляем ячейки в строку
     row.appendChild(tdCheckbox);
@@ -146,4 +159,10 @@ function addOrdering(headerRow,tbody) {
       });
     });
 
+}
+
+function createDiv(content = 'cell-content') {
+  const divcell = document.createElement('div');
+  divcell.classList.add(content);
+  return divcell
 }
