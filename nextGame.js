@@ -145,59 +145,10 @@ function processAndDisplayData(data) {
     const headerRow = createTable();
     userTable.appendChild(headerRow);
     
-    let tbody = crUsers(users, date);
+    const tbody = crUsers(users, date);
     userTable.appendChild(tbody);
 
-    const headers = headerRow.querySelectorAll("th");
-
-    headers.forEach(header => {
-      header.addEventListener("click", () => {
-        const column = header.getAttribute("data-column");
-        const order = header.getAttribute("data-order") === "asc" ? "desc" : "asc";
-
-        // Сортировка строк таблицы
-        const rows = Array.from(tbody.querySelectorAll("tr"));
-        const columnIndex = Array.from(headers).indexOf(header);
-        
-        if (column === "checkbox") {
-          // Сортировка по состоянию чекбоксов
-          rows.sort((rowA, rowB) => {
-            const checkboxA = rowA.querySelector(".user-checkbox").checked ? 1 : 0;
-            const checkboxB = rowB.querySelector(".user-checkbox").checked ? 1 : 0;
-
-            return order === "asc" ? checkboxA - checkboxB : checkboxB - checkboxA;
-          });
-        } else {
-          rows.sort((a, b) => {
-            const aText = a.cells[columnIndex].innerText.trim();
-            const bText = b.cells[columnIndex].innerText.trim();
-        
-            // Преобразуем текст в числа, если возможно
-            const aNumber = parseFloat(aText);
-            const bNumber = parseFloat(bText);
-        
-            // Проверяем, являются ли значения числами
-            if (!isNaN(aNumber) && !isNaN(bNumber)) {
-              return order === "asc" ? aNumber - bNumber : bNumber - aNumber;
-            } else {
-              // Если значения не числа, сортируем как строки
-              return order === "asc" ? aText.localeCompare(bText) : bText.localeCompare(aText);
-            }
-          });
-        }
-
-        // Перерисовываем строки
-        tbody.innerHTML = "";
-        rows.forEach(row => tbody.appendChild(row));
-
-        // Обновляем атрибут порядка
-        header.setAttribute("data-order", order);
-
-        // Обновляем визуализацию стрелок
-        headers.forEach(h => h.querySelector(".sort-icon").classList.remove("asc", "desc"));
-        header.querySelector(".sort-icon").classList.add(order);
-      });
-    });
+    addOrdering(headerRow, tbody);
 
     tableContainer.appendChild(userTable)
     groupElement.appendChild(tableContainer)
