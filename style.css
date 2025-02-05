@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
 .site-header {
   padding: 1rem;
   background: #004d28;
@@ -41,7 +43,10 @@
 
 
 body {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Rubik", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
   margin: 0;
 }
 
