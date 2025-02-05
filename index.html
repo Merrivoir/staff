@@ -122,9 +122,11 @@
           localStorage.setItem('jwt', token);
                   
           // Динамически загружаем основные скрипты
+          await loadScript('globalVars.js');
+          await loadScript('misc.js');
           await loadScript('nextGame.js');
           await loadScript('calendar.js');
-          await loadScript('misc.js');
+          
 
           // Показываем контент
           document.getElementById('content').classList.remove('pre-auth');

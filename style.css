@@ -55,7 +55,7 @@ body {
 .subhead {
   margin: 1rem auto;
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 1.4rem;
 }
 
 #sync-container {
@@ -106,15 +106,16 @@ table {
   margin: auto;
 }
 
-th, td {
+.header-content {
   border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
+  gap: 0.4rem;
+  padding: 0.3rem;
+  display: flex;
+  flex-direction: row;  /* Элементы располагаются в столбец */
+  align-items: center;     /* Выравнивание по центру */
+  justify-content: center; /* Центрирование по вертикали */
+  text-align: center;      /* Выравнивание текста по центру */
   background-color: #f4f4f4;
-  text-align: center;
 }
 
 .center {
@@ -273,6 +274,14 @@ th {
   color: rgb(247, 160, 38);
   display: inline-block;
 }
+
+.sort-icon {
+  margin-top: -0.4rem;
+  margin-left: -0.1rem; 
+  margin-right: 0.3rem;
+}
+
+
 
 /* Видимость активной стрелки */
 span.sort-icon.asc span.sort-icon.desc {

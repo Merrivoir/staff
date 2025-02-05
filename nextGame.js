@@ -1,8 +1,3 @@
-const apiUrl = "https://script.google.com/macros/s/AKfycby91-z85D_pFeXLdwJJ8Ht5b5IAZWPs_Xor8IECW8d443F4ol6YA_M9mWs9Tz8tmmTZ/exec"
-const modal = document.getElementById("loadingModal")
-const listContainer = document.getElementById("list-container")
-
-
 async function fetchData(date = null) {
   try {
     // Показать индикатор загрузки
@@ -131,8 +126,6 @@ function processAndDisplayData(data) {
   }
 
   // Загружаем состояния чекбоксов для текущей даты
-  const checkboxStates = JSON.parse(localStorage.getItem("checkboxStates")) || {};
-  const savedStatesForDate = checkboxStates[date] || {};
 
   for (const columnName in groupedData) {
     const users = groupedData[columnName];
@@ -148,39 +141,15 @@ function processAndDisplayData(data) {
     tableContainer.classList.add('table-container')
     
     const userTable = document.createElement("table");
-    userTable.setAttribute("border", "1");
 
-    const headerRow = document.createElement("tr");
-    headerRow.innerHTML = `
-      <th data-column="checkbox"><span>Участие</span><span class="sort-icon"></span></th>
-      <th><span>Имя</span><span class="sort-icon"></span></th>
-      <th><span>Номер телефона</span><span class="sort-icon"></span></th>
-      <th><span>Оплата</span><span class="sort-icon"></span></th>
-      <th data-column="order"><span>№ п/п</span><span class="sort-icon"></span></th>
-    `;
+    const headerRow = createTable();
     userTable.appendChild(headerRow);
-    const tbody = document.createElement('tbody');
-    let n = 1
-    users.forEach(user => {
-      const row = document.createElement("tr");
-      const isChecked = savedStatesForDate[user.id] || false;
-
-      row.innerHTML = `
-        <td class="center">
-          <input type="checkbox" class="user-checkbox" 
-            data-user-id="${user.id}" ${isChecked ? "checked" : ""}>
-        </td>
-        <td>${user.name}</td>
-        <td><a href="https://api.whatsapp.com/send?phone=${user.id}">${user.id}</a></td>
-        <td>${user.sum}</td>
-        <td class="center">${n}.</td>
-      `;
-      tbody.appendChild(row);
-      n = n + 1
-    });
-
+    
+    let tbody = crUsers(users, date);
     userTable.appendChild(tbody);
+
     const headers = headerRow.querySelectorAll("th");
+
     headers.forEach(header => {
       header.addEventListener("click", () => {
         const column = header.getAttribute("data-column");
@@ -229,6 +198,7 @@ function processAndDisplayData(data) {
         header.querySelector(".sort-icon").classList.add(order);
       });
     });
+
     tableContainer.appendChild(userTable)
     groupElement.appendChild(tableContainer)
     listContainer.appendChild(groupElement);
