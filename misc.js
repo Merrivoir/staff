@@ -6,6 +6,28 @@ function mws(show = 1) {
   }
 }
 
+// Сортировка данных и добавление новых данных в хранилище
+function saveAndSortData(newData) {
+  // Извлекаем данные из localStorage
+  const storedData = JSON.parse(localStorage.getItem('allData')) || {};
+  // Объединяем старые данные с новыми
+  const mergedData = { ...storedData, ...newData };
+  // Сортируем данные по дате (в порядке возрастания)
+  const sortedData = Object.keys(mergedData)
+    .sort((a, b) => new Date(a) - new Date(b)) // Сортировка ключей по дате
+    .reduce((acc, key) => {
+      acc[key] = mergedData[key]; // Создаём новый объект с отсортированными ключами
+      return acc;
+    }, {});
+  // Записываем отсортированные данные обратно в localStorage
+  localStorage.setItem('allData', JSON.stringify(sortedData));
+  eventDates = Object.keys(sortedData);
+  if (calendarInstance) {
+    calendarInstance.redraw(); // перерисовываем календарь
+  }
+  return sortedData; // Возвращаем обновлённые данные
+}
+
 function createTableHeader() {
   
   const headerRow = document.createElement("tr");
@@ -207,6 +229,13 @@ function showUpdateNotification(text, level=0) {
 
 function saveDataToLocalStorage(data) {
   const existingData = JSON.parse(localStorage.getItem('allData')) || {};
+  let sd = JSON.parse(localStorage.getItem('allData')) || {};
+  let ed = Object.keys(sd);
+
+  let eventDates = ed.map(dateStr => {
+  const [year, month, day] = dateStr.split('-');
+  return new Date(year, month - 1, day).toLocaleDateString('en-CA');
+});
   const updatedData = { ...existingData, ...data };
   localStorage.setItem('allData', JSON.stringify(updatedData));
 }

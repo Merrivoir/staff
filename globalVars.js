@@ -2,16 +2,9 @@ const apiUrl = "https://script.google.com/macros/s/AKfycby91-z85D_pFeXLdwJJ8Ht5b
 const modal = document.getElementById("loadingModal");
 const listContainer = document.getElementById("list-container");
 const calendarInput = document.getElementById("calendar");
-const content = document.getElementById('content')
-let isProgrammaticChange = false
-
-let sd = JSON.parse(localStorage.getItem('allData')) || {};
-let ed = Object.keys(sd);
-
-let eventDates = ed.map(dateStr => {
-  const [year, month, day] = dateStr.split('-');
-  return new Date(year, month - 1, day).toLocaleDateString('en-CA');
-});
+const content = document.getElementById('content');
+let isProgrammaticChange = false;
+let eventDates = [];
 
 const headers = [
     { 

@@ -46,38 +46,31 @@ function initSwiper() {
 
 // Инициализация календаря  
   
-  const calendarInstance = flatpickr(calendarInput, {
-    dateFormat: "Y-m-d",
-    defaultDate: new Date(), // Устанавливаем текущую дату по умолчанию
-    firstDayOfWeek: 1,
-    enableTime: false,
-    onChange: function(selectedDates, dateStr) {
-      if (isProgrammaticChange) {
-        isProgrammaticChange = false;
-        return;
-      }
-      
-      console.log("Выбрана дата пользователем:", dateStr);
-      const swiper = initSwiper()
-      const targetIndex = Array.from(swiper.slides).findIndex(
-        slide => slide.getAttribute('data-date') === dateStr
-      );
-      
-      targetIndex !== -1 ? swiper.slideTo(targetIndex) : fetchData(dateStr);
-    },
-    enable: [
-      {
-        from: new Date().fp_incr(-365), // Показать даты за последний год
-        to: new Date().fp_incr(365),    // и следующий год
-      },
-      ...eventDates
-    ],
-    onDayCreate: function(dObj, dStr, fp, dayElem) {
-      const currentDate = flatpickr.formatDate(dayElem.dateObj, 'Y-m-d');
-      if (eventDates.includes(currentDate)) {
-        dayElem.innerHTML += '<span class="event-dot"></span>';
-        dayElem.classList.add('has-event');
-      }
+const calendarInstance = flatpickr(calendarInput, {
+  dateFormat: "Y-m-d",
+  defaultDate: new Date(), // Устанавливаем текущую дату по умолчанию
+  firstDayOfWeek: 1,
+  enableTime: false,
+  onChange: function(selectedDates, dateStr) {
+    if (isProgrammaticChange) {
+      isProgrammaticChange = false;
+      return;
     }
-  });
+      
+    console.log("Выбрана дата пользователем:", dateStr);
+    const swiper = initSwiper()
+    const targetIndex = Array.from(swiper.slides).findIndex(
+      slide => slide.getAttribute('data-date') === dateStr
+    );
+    
+    targetIndex !== -1 ? swiper.slideTo(targetIndex) : fetchData(dateStr);
+  },
+  onDayCreate: function(dObj, dStr, fp, dayElem) {
+    const currentDate = flatpickr.formatDate(dayElem.dateObj, 'Y-m-d');
+    if (eventDates.includes(currentDate)) {
+      dayElem.innerHTML += '<span class="event-dot"></span>';
+      dayElem.classList.add('has-event');
+    }
+  }
+});
 

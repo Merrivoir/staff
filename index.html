@@ -68,14 +68,11 @@
         return;
       }
 
-    // Проверка и установка аватара
     avatar.src = user.photo_url || 'https://via.placeholder.com/40';
     avatar.alt = `Аватар ${user.first_name || user.username}`;
 
-    // Приоритет имён: first_name > username > ID
     name.textContent = user.first_name || user.username || `User #${user.id}`;
 
-    // Показываем блок
     header.classList.remove('hidden');
     }
 
@@ -83,16 +80,13 @@
       let token = getTokenFromUrl();
       const authServerURL = 'https://richmom.vercel.app/verify';
       const loginURL = 'https://richmom.vercel.app';
-
+      
       if (!token) {
         token = localStorage.getItem('jwt');
       }
-
+      
       try {
-
         if (!token) throw new Error('No token found');
-
-        // Проверка токена
         const response = await fetch(authServerURL, {
           method: 'POST',
           headers: {
@@ -104,36 +98,23 @@
           const errorData = await response.json().catch(() => null);
           throw new Error(errorData?.message || `HTTP error! status: ${response.status}`);
         } else {
-
-          // Сохраняем токен
           localStorage.setItem('jwt', token);
-  
-          // Получаем данные пользователя из ответа
           const result = await response.json();
-  
-          // Проверяем структуру ответа
+
           if (result.valid && result.user) {
-            // Показываем шапку с данными пользователя
             showUserHeader(result.user);
           } else {
             throw new Error('Invalid server response');
           }
 
-          // Сохраняем токен
           localStorage.setItem('jwt', token);
                   
-          // Динамически загружаем основные скрипты
           await loadScript('globalVars.js');
           await loadScript('misc.js');
           await loadScript('calendar.js');
           await loadScript('nextGame.js');
-          
-          
-          
-
-          // Показываем контент
+        
           document.getElementById('content').classList.remove('pre-auth');
-          // Добавляем обработчик кнопки выхода
           const logoutBtn = document.querySelector('.logout-btn');
           if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
@@ -144,12 +125,9 @@
             console.error('Logout button not found');
           }
         }
-
       } catch (error) {
-
         console.error('Auth error:', error);
         window.location.href = `${loginURL}?source=${encodeURIComponent(window.location.href)}`;
-      
       } 
 
       function loadScript(src) {

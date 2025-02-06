@@ -1,17 +1,51 @@
-async function fetchData(date = null) {
+(async function() {
   try {
-    // Показать индикатор загрузки
-    modal.style.display = "flex";
-    if (!date) {
-      date = new Date().toISOString().split("T")[0]; // Формат YYYY-MM-DD
-    }
     
     const savedData = JSON.parse(localStorage.getItem('allData')) || {};
 
     if (Object.keys(savedData).length > 0) {
-      modal.style.display = "none"
       console.log("Загружаем данные из локального хранилища");
-      processAndDisplayData(savedData, date);
+      processAndDisplayData(savedData, null);
+    }
+    
+    const sync = document.getElementById('sync-container')
+    sync.classList.remove('hidden')
+    
+    try {
+      // Отправляем запрос на сервер
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+        throw new Error(`Ошибка HTTP: ${response.status}`);
+      }
+    
+      const remoteData = await response.json();
+      console.log("Обновлены данные с сервера");
+      const nd = saveAndSortData(remoteData)
+      processAndDisplayData(nd, null);
+      showUpdateNotification("Данные обновлены");
+      
+    } catch (error) {
+      console.error("Ошибка загрузки данных:", error);
+      alert("Не удалось загрузить данные.");
+    } finally {
+      // Скрываем элемент sync после завершения запроса
+      sync.classList.add('hidden');
+    }
+
+  } catch (error) {
+    console.error("Ошибка загрузки данных:", error);
+    showUpdateNotification("Ошибка загрузки данных");
+  } finally {
+    modal.style.display = "none"
+  }
+})();
+
+
+async function fetchData(date = null) {
+  try {
+    // Показать индикатор загрузки
+    if (!date) {
+      date = new Date().toISOString().split("T")[0]; // Формат YYYY-MM-DD
     }
     
     const sync = document.getElementById('sync-container')
@@ -32,19 +66,11 @@ async function fetchData(date = null) {
       }
     
       const remoteData = await response.json();
-      console.log(remoteData)
-    
-      // Проверяем изменения в данных
-      if (!savedData || JSON.stringify(savedData) !== JSON.stringify(remoteData)) {
-        console.log("Обновлены данные с сервера");
-        saveDataToLocalStorage(remoteData) // Сохраняем новые данные
-        const nd = sortLocalStorage()
-        processAndDisplayData(nd, date);
-        showUpdateNotification("Данные обновлены");
-      } else {
-        console.log("Данные актуальны, обновление не требуется.");
-        showUpdateNotification("Данные актуальны");
-      }
+      console.log("Обновлены данные с сервера");
+      const nd = saveAndSortData(remoteData)
+      processAndDisplayData(nd, date);
+      showUpdateNotification("Данные обновлены");
+      
     } catch (error) {
       console.error("Ошибка загрузки данных:", error);
       alert("Не удалось загрузить данные.");
@@ -56,8 +82,6 @@ async function fetchData(date = null) {
   } catch (error) {
     console.error("Ошибка загрузки данных:", error);
     showUpdateNotification("Ошибка загрузки данных");
-  } finally {
-    modal.style.display = "none"
   }
 }
 
@@ -194,6 +218,3 @@ function processAndDisplayData(data, date) {
     console.log('Слайды с датами не найдены');
   }
 }
-
-processAndDisplayData(sd)
-fetchData()
