@@ -39,11 +39,6 @@ async function fetchData(date = null) {
         console.log("Обновлены данные с сервера");
         saveDataToLocalStorage(remoteData) // Сохраняем новые данные
         const nd = sortLocalStorage()
-        ed = Object.keys(nd);
-        eventDates = ed.map(dateStr => {
-          const [year, month, day] = dateStr.split('-');
-          return new Date(year, month - 1, day).toLocaleDateString('en-CA');
-        });
         processAndDisplayData(nd, date);
         showUpdateNotification("Данные обновлены");
       } else {
