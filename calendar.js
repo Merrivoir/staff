@@ -62,7 +62,7 @@ const calendarInstance = flatpickr(calendarInput, {
     const targetIndex = Array.from(swiper.slides).findIndex(
       slide => slide.getAttribute('data-date') === dateStr
     );
-    
+    console.log(`TargetIndex: ${targetIndex}`)
     targetIndex !== -1 ? swiper.slideTo(targetIndex) : fetchData(dateStr);
   },
   onDayCreate: function(dObj, dStr, fp, dayElem) {
