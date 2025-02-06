@@ -2,6 +2,11 @@ const apiUrl = "https://script.google.com/macros/s/AKfycby91-z85D_pFeXLdwJJ8Ht5b
 const modal = document.getElementById("loadingModal");
 const listContainer = document.getElementById("list-container");
 const calendarInput = document.getElementById("calendar");
+const content = document.getElementById('content')
+let isProgrammaticChange = false
+
+const sd = JSON.parse(localStorage.getItem('allData')) || {};
+const eventDates = Object.keys(sd);
 
 const headers = [
     { 

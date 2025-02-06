@@ -2,18 +2,16 @@ async function fetchData(date = null) {
   try {
     // Показать индикатор загрузки
     modal.style.display = "flex";
-    listContainer.classList.add("hidden");
     if (!date) {
       date = new Date().toISOString().split("T")[0]; // Формат YYYY-MM-DD
     }
-    const localDataKey = `data_${date}`; // Уникальный ключ для хранения данных по дате
-    const localData = JSON.parse(localStorage.getItem(localDataKey));
     
-    if (localData) {
+    const savedData = JSON.parse(localStorage.getItem('allData')) || {};
+
+    if (Object.keys(savedData).length > 0) {
       modal.style.display = "none"
       console.log("Загружаем данные из локального хранилища");
-      processAndDisplayData(localData);
-      listContainer.classList.remove("hidden");
+      processAndDisplayData(savedData, date);
     }
     
     const sync = document.getElementById('sync-container')
@@ -34,14 +32,15 @@ async function fetchData(date = null) {
       }
     
       const remoteData = await response.json();
+      console.log(remoteData)
     
       // Проверяем изменения в данных
-      if (!localData || JSON.stringify(localData) !== JSON.stringify(remoteData)) {
+      if (!savedData || JSON.stringify(savedData) !== JSON.stringify(remoteData)) {
         console.log("Обновлены данные с сервера");
-        localStorage.setItem(localDataKey, JSON.stringify(remoteData)); // Сохраняем новые данные
-        processAndDisplayData(remoteData); // Отображаем новые данные
-        listContainer.classList.remove("hidden");
-        showUpdateNotification("Данные обновлены"); // Показываем уведомление об обновлении данных
+        saveDataToLocalStorage(remoteData) // Сохраняем новые данные
+        const nd = sortLocalStorage()
+        processAndDisplayData(nd, date);
+        showUpdateNotification("Данные обновлены");
       } else {
         console.log("Данные актуальны, обновление не требуется.");
         showUpdateNotification("Данные актуальны");
@@ -62,60 +61,54 @@ async function fetchData(date = null) {
   }
 }
 
-function showUpdateNotification(text, level=0) {
-  
-  switch (level) {
-    case 0:
-      back = "green"
-      break
-    case 1:
-      back = "yellow"
-      break
-    case 2:
-      back = "red"
-      break
-    default:
-      back = "gray"
-  }
-
-  const notification = document.createElement("div");
-  notification.textContent = text;
-  notification.className = `update-notification ${back}`;
-  document.body.appendChild(notification);
-
-  setTimeout(() => {
-    notification.classList.add("fade-out");
-    // Удаляем элемент после завершения анимации
-    setTimeout(() => {
-      notification.remove();
-    }, 800); // Время должно совпадать с длительностью transition
-  }, 3000);
-}
-
 // Обработка и отображение данных
-function processAndDisplayData(data) {
-  listContainer.innerHTML = ""; // Очистить контейнер
-  const date = Object.keys(data)[0];
-  const calendar = document.getElementById('event');
+function processAndDisplayData(data, date) {
+  
+  document.querySelectorAll('.swiper-container').forEach(element => {
+    element.remove();
+  });
+  
+  // Создаём контейнеры Swiper
+  const swiperContainer = document.createElement('div');
+  swiperContainer.classList.add('swiper-container');
 
-  if (date) {
-    calendar.textContent = `Мероприятия на:`;
-  } else {
-    calendar.textContent = "Мероприятий нет";
-  }
+  const swiperWrapper = document.createElement('div');
+  swiperWrapper.classList.add('swiper-wrapper');
 
+  swiperContainer.appendChild(swiperWrapper);
+
+  // Добавим кнопки навигации (если нужны)
+  const swiperButtonNext = document.createElement('div');
+  swiperButtonNext.classList.add('swiper-button-next');
+  swiperContainer.appendChild(swiperButtonNext);
+
+  const swiperButtonPrev = document.createElement('div');
+  swiperButtonPrev.classList.add('swiper-button-prev');
+  swiperContainer.appendChild(swiperButtonPrev);
+
+  // Добавим пагинацию (если нужна)
+  const swiperPagination = document.createElement('div');
+  swiperPagination.classList.add('swiper-pagination');
+  swiperContainer.appendChild(swiperPagination);
+
+  // Объект для хранения данных, сгруппированных по датам и событиям
   const groupedData = {};
+
+  // Группировка данных по датам и событиям
   for (const date in data) {
     const users = data[date];
+    if (!groupedData[date]) {
+      groupedData[date] = {};
+    }
     for (const userName in users) {
       const user = users[userName];
-      user.events.forEach((columnName, index) => {
+      user.events.forEach((eventName, index) => {
         const sum = user.sums[index];
         if (sum !== "0") {
-          if (!groupedData[columnName]) {
-            groupedData[columnName] = [];
+          if (!groupedData[date][eventName]) {
+            groupedData[date][eventName] = [];
           }
-          groupedData[columnName].push({
+          groupedData[date][eventName].push({
             name: userName,
             id: user.id,
             sum
@@ -125,43 +118,59 @@ function processAndDisplayData(data) {
     }
   }
 
-  // Загружаем состояния чекбоксов для текущей даты
+  // Проходим по датам
+  for (const date in groupedData) {
+    const dateGroup = groupedData[date];
 
-  for (const columnName in groupedData) {
-    const users = groupedData[columnName];
-    const groupElement = document.createElement("div");
-    groupElement.classList.add("list-group");
+    // Создаём слайд для каждой даты
+    const swiperSlide = document.createElement('div');
+    swiperSlide.classList.add('swiper-slide');
+    swiperSlide.setAttribute('data-date', date)
 
-    const header = document.createElement("h3");
-    header.textContent = columnName;
-    header.classList.add('subhead')
-    groupElement.appendChild(header);
-    
-    const tableContainer = document.createElement("div");
-    tableContainer.classList.add('table-container')
-    
-    const userTable = document.createElement("table");
+    const dateElement = document.createElement("div");
+    dateElement.classList.add("date-group");
 
-    const headerRow = createTable();
-    userTable.appendChild(headerRow);
-    
-    const tbody = crUsers(users, date);
-    userTable.appendChild(tbody);
+    // Проходим по событиям внутри даты
+    for (const eventName in dateGroup) {
+      const users = dateGroup[eventName];
 
-    addOrdering(headerRow, tbody);
+      const groupElement = document.createElement("div");
+      groupElement.classList.add("list-group");
 
-    tableContainer.appendChild(userTable)
-    groupElement.appendChild(tableContainer)
-    listContainer.appendChild(groupElement);
+      const header = document.createElement("h3");
+      header.textContent = eventName;
+      header.classList.add('subhead');
+      groupElement.appendChild(header);
+
+      const tableContainer = document.createElement("div");
+      tableContainer.classList.add('table-container');
+
+      const userTable = document.createElement("table");
+
+      const headerRow = createTableHeader();
+      userTable.appendChild(headerRow);
+
+      const tbody = createTableUsers(users, date);
+      userTable.appendChild(tbody);
+
+      addOrdering(headerRow, tbody);
+
+      tableContainer.appendChild(userTable);
+      groupElement.appendChild(tableContainer);
+      dateElement.appendChild(groupElement);
+    }
+
+    swiperSlide.appendChild(dateElement);
+    swiperWrapper.appendChild(swiperSlide);
   }
+  content.appendChild(swiperContainer)
 
-  listContainer.classList.remove("hidden");
-
-  // Добавляем обработчик изменения состояния чекбоксов
-  listContainer.addEventListener("change", function (event) {
+  // Обновляем обработчик изменения состояния чекбоксов
+  swiperContainer.addEventListener("change", function (event) {
     if (event.target.classList.contains("user-checkbox")) {
       const userId = event.target.getAttribute("data-user-id");
       const isChecked = event.target.checked;
+      const date = event.target.getAttribute("data-date"); // Получаем дату из атрибута
 
       // Обновляем состояния в локальном хранилище для текущей даты
       const checkboxStates = JSON.parse(localStorage.getItem("checkboxStates")) || {};
@@ -172,7 +181,18 @@ function processAndDisplayData(data) {
       localStorage.setItem("checkboxStates", JSON.stringify(checkboxStates));
     }
   });
+  const swiper = initSwiper()
+  const targetDate = date ? date : new Date().toISOString().split("T")[0];
+  const slides = document.querySelectorAll('.swiper-slide');
+  const slideIndex = findSlideIndexByDate(slides, targetDate);
+
+  if (slideIndex !== -1) {
+    swiper.slideTo(slideIndex);
+    console.log(`Перешли к слайду с индексом ${slideIndex}`);
+  } else {
+    console.log('Слайды с датами не найдены');
+  }
 }
 
-// Вызов функции для загрузки данных
-fetchData();
+processAndDisplayData(sd)
+fetchData()

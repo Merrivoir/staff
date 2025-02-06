@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
     <title>Richmom Club Events</title>
     
     <!-- Стиль для скрытия контента до проверки -->
@@ -43,7 +46,6 @@
         <span id="sync-label">Актуализация...</span>
       </div> 
     </div>
-    <div id="list-container" class="list-container hidden"></div>
   </div>
 
   <!-- Модальное окно -->
@@ -124,8 +126,10 @@
           // Динамически загружаем основные скрипты
           await loadScript('globalVars.js');
           await loadScript('misc.js');
-          await loadScript('nextGame.js');
           await loadScript('calendar.js');
+          await loadScript('nextGame.js');
+          
+          
           
 
           // Показываем контент

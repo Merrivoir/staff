@@ -6,7 +6,7 @@ function mws(show = 1) {
   }
 }
 
-function createTable() {
+function createTableHeader() {
   
   const headerRow = document.createElement("tr");
 
@@ -41,7 +41,7 @@ function createTable() {
   return headerRow
 }
 
-function crUsers(users, date) {
+function createTableUsers(users, date) {
   const tbody = document.createElement('tbody');
   const checkboxStates = JSON.parse(localStorage.getItem("checkboxStates")) || {};
   const savedStatesForDate = checkboxStates[date] || {};
@@ -107,6 +107,7 @@ function crUsers(users, date) {
 
 }
 
+// Функция добавления обработчика событий для сортировки таблиц
 function addOrdering(headerRow,tbody) {
   const headers = headerRow.querySelectorAll("th");
 
@@ -161,8 +162,99 @@ function addOrdering(headerRow,tbody) {
 
 }
 
+// Функция для создания ячейки таблицы
 function createDiv(content = 'cell-content') {
   const divcell = document.createElement('div');
   divcell.classList.add(content);
   return divcell
+}
+
+// Функция для показа уведомлений
+function showUpdateNotification(text, level=0) {
+  
+  switch (level) {
+    case 0:
+      back = "green"
+      break
+    case 1:
+      back = "yellow"
+      break
+    case 2:
+      back = "red"
+      break
+    default:
+      back = "gray"
+  }
+
+  const notification = document.createElement("div");
+  notification.textContent = text;
+  notification.className = `update-notification ${back}`;
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    notification.classList.add("fade-out");
+    // Удаляем элемент после завершения анимации
+    setTimeout(() => {
+      notification.remove();
+    }, 800); // Время должно совпадать с длительностью transition
+  }, 3000);
+}
+
+function saveDataToLocalStorage(data) {
+  const existingData = JSON.parse(localStorage.getItem('allData')) || {};
+  const updatedData = { ...existingData, ...data };
+  localStorage.setItem('allData', JSON.stringify(updatedData));
+}
+
+function sortLocalStorage() {
+  const storedDataJSON = localStorage.getItem('allData');
+  if (storedDataJSON) {
+    const storedData = JSON.parse(storedDataJSON);
+
+    // Получаем и сортируем даты
+    const dateKeys = Object.keys(storedData).sort((a, b) => new Date(a) - new Date(b));
+    const sortedData = {};
+    // Обрабатываем данные в отсортированном порядке
+    dateKeys.forEach(dateKey => {
+      sortedData[dateKey] = storedData[dateKey];
+    });
+    localStorage.removeItem('allData');
+    localStorage.setItem('allData', JSON.stringify(sortedData));
+
+  } else {
+    console.log('Данные в localStorage отсутствуют или повреждены.');
+  }
+  return JSON.parse(localStorage.getItem('allData'))
+}
+
+// Функция програмной смены даты в календаре
+function setCalendarDate(dateStr) {
+  isProgrammaticChange = true;
+  calendarInstance.setDate(dateStr, true); // Второй параметр - форсировать обновление
+}
+
+// Функция для поиска ближайшей даты относительно запрошенной
+function findSlideIndexByDate(slides, targetDate) {
+  let closestIndex = -1;
+  let closestDate = null;
+
+  slides.forEach((slide, index) => {
+    const slideDateStr = slide.getAttribute('data-date');
+    if (!slideDateStr) return; // Пропускаем слайды без data-date
+
+    // Преобразуем даты в объекты Date
+    const slideDate = new Date(slideDateStr);
+    const target = new Date(targetDate);
+
+    // Проверяем, что дата слайда меньше или равна целевой дате
+    if (slideDate <= target) {
+      // Если это первая подходящая дата или она ближе к целевой
+      if (!closestDate || slideDate > closestDate) {
+        closestDate = slideDate;
+        closestIndex = index;
+      }
+    }
+  });
+
+  return closestIndex;
 }

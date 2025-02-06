@@ -308,3 +308,21 @@ span.sort-icon.asc span.sort-icon.desc {
 th {
   cursor: pointer;
 }
+
+/* Выделение дат с событиями */
+.event-dot {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  background: #4CAF50;
+  border-radius: 50%;
+}
+
+.swiper-pagination,
+.swiper-button-next,
+.swiper-button-prev {
+  position: fixed !important;
+}
