@@ -5,14 +5,13 @@ const calendarInput = document.getElementById("calendar");
 const content = document.getElementById('content')
 let isProgrammaticChange = false
 
-const sd = JSON.parse(localStorage.getItem('allData')) || {};
-const ed = Object.keys(sd);
+let sd = JSON.parse(localStorage.getItem('allData')) || {};
+let ed = Object.keys(sd);
 
-const eventDates = ed.map(dateStr => {
-    const [year, month, day] = dateStr.split('-');
-    return new Date(year, month - 1, day).toLocaleDateString('en-CA');
-  });
-  
+let eventDates = ed.map(dateStr => {
+  const [year, month, day] = dateStr.split('-');
+  return new Date(year, month - 1, day).toLocaleDateString('en-CA');
+});
 
 const headers = [
     { 
