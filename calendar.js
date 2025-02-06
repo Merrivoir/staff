@@ -36,6 +36,7 @@ function initSwiper() {
       }
       
       console.log("Выбрана дата пользователем:", dateStr);
+      const swiper = initSwiper()
       const targetIndex = Array.from(swiper.slides).findIndex(
         slide => slide.getAttribute('data-date') === dateStr
       );
