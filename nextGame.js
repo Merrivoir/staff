@@ -187,7 +187,8 @@ function processAndDisplayData(data, date) {
   const slideIndex = findSlideIndexByDate(slides, targetDate);
 
   if (slideIndex !== -1) {
-    swiper.slideTo(slideIndex);
+    swiper.slideTo(slideIndex[0]);
+    setCalendarDate(slideIndex[1])
     console.log(`Перешли к слайду с индексом ${slideIndex}`);
   } else {
     console.log('Слайды с датами не найдены');

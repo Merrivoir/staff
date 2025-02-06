@@ -2,7 +2,29 @@ function initSwiper() {
 // Инициализируем Swiper после добавления всех слайдов
   const swiper = new Swiper('.swiper-container', {
     // Настройки Swiper
-    loop: false,
+    slidesPerView: 1, // Показывать только один слайд за раз
+    spaceBetween: 10, // Расстояние между слайдами
+    centeredSlides: false, // Не центрировать слайды
+    loop: false, // Отключить зацикливание (если не нужно)
+    freeMode: false, // Отключить свободный режим
+
+  // Адаптивность
+    breakpoints: {
+      // Настройки для разных разрешений
+      640: {
+        slidesPerView: 1,
+        spaceBetween: 10,
+      },
+      768: {
+        slidesPerView: 1,
+        spaceBetween: 15,
+      },
+      1024: {
+        slidesPerView: 1,
+        spaceBetween: 20,
+      },
+    },
+
     navigation: {
       nextEl: '.swiper-button-next',
       prevEl: '.swiper-button-prev',
@@ -51,9 +73,10 @@ function initSwiper() {
       ...eventDates
     ],
     onDayCreate: function(dObj, dStr, fp, dayElem) {
-      const date = dayElem.dateObj.toISOString().split('T')[0];
-      if (eventDates.includes(date)) {
+      const currentDate = flatpickr.formatDate(dayElem.dateObj, 'Y-m-d');
+      if (eventDates.includes(currentDate)) {
         dayElem.innerHTML += '<span class="event-dot"></span>';
+        dayElem.classList.add('has-event');
       }
     }
   });

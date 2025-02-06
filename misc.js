@@ -256,5 +256,5 @@ function findSlideIndexByDate(slides, targetDate) {
     }
   });
 
-  return closestIndex;
+  return [closestIndex, closestDate];
 }

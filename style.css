@@ -317,8 +317,29 @@ th {
   transform: translateX(-50%);
   width: 5px;
   height: 5px;
-  background: #4CAF50;
+  background: #e928c9;
   border-radius: 50%;
+}
+
+.swiper-container {
+  width: 100% !important;
+  height: auto !important; /* Автоматическая высота */
+  overflow: hidden !important; /* Скрываем переполнение */
+}
+
+.swiper-wrapper {
+  display: flex;
+  align-items: stretch; /* Растягиваем слайды по высоте */
+}
+
+.swiper-slide {
+  flex-shrink: 0; /* Запрещаем сжатие слайдов */
+  width: 90%; /* Ширина слайда равна ширине контейнера */
+  height: auto; /* Автоматическая высота */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box; /* Учитываем padding и border */
 }
 
 .swiper-pagination,
