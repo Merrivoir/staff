@@ -45,7 +45,8 @@ function createTableUsers(users, date) {
   const tbody = document.createElement('tbody');
   const checkboxStates = JSON.parse(localStorage.getItem("checkboxStates")) || {};
   const savedStatesForDate = checkboxStates[date] || {};
-
+  let n = 1
+  
   users.forEach(user => {
     const row = document.createElement('tr');
   
@@ -56,17 +57,21 @@ function createTableUsers(users, date) {
     const div1 = createDiv();
     div1.classList.add('center')
     const tdCheckbox = document.createElement('td');
-  
+    const nmbr = document.createElement('span');
+    nmbr.textContent = `${n}. `;
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.classList.add('user-checkbox');
     checkbox.dataset.userId = user.id;
+    
     if (isChecked) {
       checkbox.checked = true;
     }
 
+    div1.appendChild(nmbr);
     div1.appendChild(checkbox);
     tdCheckbox.appendChild(div1);
+    n = n + 1;
 
     // Создаём ячейку с именем
     const div2 = createDiv();
