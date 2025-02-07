@@ -110,9 +110,10 @@
           localStorage.setItem('jwt', token);
                   
           await loadScript('globalVars.js');
-          await loadScript('misc.js');
           await loadScript('calendar.js');
+          await loadScript('misc.js');
           await loadScript('nextGame.js');
+          
         
           document.getElementById('content').classList.remove('pre-auth');
           const logoutBtn = document.querySelector('.logout-btn');

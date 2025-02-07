@@ -85,36 +85,8 @@ async function fetchData(date = null) {
   }
 }
 
-// Обработка и отображение данных
-function processAndDisplayData(data, date) {
-  
-  document.querySelectorAll('.swiper-container').forEach(element => {
-    element.remove();
-  });
-  
-  // Создаём контейнеры Swiper
-  const swiperContainer = document.createElement('div');
-  swiperContainer.classList.add('swiper-container');
-
-  const swiperWrapper = document.createElement('div');
-  swiperWrapper.classList.add('swiper-wrapper');
-
-  swiperContainer.appendChild(swiperWrapper);
-
-  // Добавим кнопки навигации (если нужны)
-  const swiperButtonNext = document.createElement('div');
-  swiperButtonNext.classList.add('swiper-button-next');
-  swiperContainer.appendChild(swiperButtonNext);
-
-  const swiperButtonPrev = document.createElement('div');
-  swiperButtonPrev.classList.add('swiper-button-prev');
-  swiperContainer.appendChild(swiperButtonPrev);
-
-  // Добавим пагинацию (если нужна)
-  const swiperPagination = document.createElement('div');
-  swiperPagination.classList.add('swiper-pagination');
-  swiperContainer.appendChild(swiperPagination);
-
+// Группировка allData по датам
+function groupByDate(data) {
   // Объект для хранения данных, сгруппированных по датам и событиям
   const groupedData = {};
 
@@ -141,7 +113,50 @@ function processAndDisplayData(data, date) {
       });
     }
   }
+  return groupedData;
+}
 
+// Обработка и отображение данных
+function processAndDisplayData(data, date) {
+
+  let swiperContainer = document.querySelector('.swiper-container');
+  
+  console.log(`swiperContainer: ${swiperContainer}`)
+
+  if (!swiperContainer) {
+  
+    // Создаём контейнеры Swiper
+    swiperContainer = document.createElement('div');
+    swiperContainer.classList.add('swiper-container');
+
+    const swiperWrapper = document.createElement('div');
+    swiperWrapper.classList.add('swiper-wrapper');
+
+    swiperContainer.appendChild(swiperWrapper);
+
+    // Добавим кнопки навигации (если нужны)
+    const swiperButtonNext = document.createElement('div');
+    swiperButtonNext.classList.add('swiper-button-next');
+    swiperContainer.appendChild(swiperButtonNext);
+
+    const swiperButtonPrev = document.createElement('div');
+    swiperButtonPrev.classList.add('swiper-button-prev');
+    swiperContainer.appendChild(swiperButtonPrev);
+
+    // Добавим пагинацию (если нужна)
+    const swiperPagination = document.createElement('div');
+    swiperPagination.classList.add('swiper-pagination');
+    swiperContainer.appendChild(swiperPagination);
+
+    content.appendChild(swiperContainer)
+
+  }
+  
+  const swiperWrapper = swiperContainer.querySelector('.swiper-wrapper');
+  swiperWrapper.innerHTML = '';
+
+  const groupedData = groupByDate(data);
+    
   // Проходим по датам
   for (const date in groupedData) {
     const dateGroup = groupedData[date];
@@ -157,55 +172,36 @@ function processAndDisplayData(data, date) {
     // Проходим по событиям внутри даты
     for (const eventName in dateGroup) {
       const users = dateGroup[eventName];
-
       const groupElement = document.createElement("div");
-      groupElement.classList.add("list-group");
-
+        groupElement.classList.add("list-group");
+      const headElement = document.createElement('div')
+        headElement.classList.add('nameGame')
       const header = document.createElement("h3");
-      header.textContent = eventName;
-      header.classList.add('subhead');
-      groupElement.appendChild(header);
-
+        header.textContent = eventName;
+        header.classList.add('subhead');
+        headElement.appendChild(header);
+        groupElement.appendChild(headElement);
       const tableContainer = document.createElement("div");
-      tableContainer.classList.add('table-container');
-
+        tableContainer.classList.add('table-container');
       const userTable = document.createElement("table");
-
       const headerRow = createTableHeader();
       userTable.appendChild(headerRow);
-
       const tbody = createTableUsers(users, date);
       userTable.appendChild(tbody);
-
-      addOrdering(headerRow, tbody);
-
+      handlerForSort(headerRow, tbody);
       tableContainer.appendChild(userTable);
       groupElement.appendChild(tableContainer);
       dateElement.appendChild(groupElement);
     }
-
     swiperSlide.appendChild(dateElement);
     swiperWrapper.appendChild(swiperSlide);
   }
   content.appendChild(swiperContainer)
 
-  // Обновляем обработчик изменения состояния чекбоксов
-  swiperContainer.addEventListener("change", function (event) {
-    if (event.target.classList.contains("user-checkbox")) {
-      const userId = event.target.getAttribute("data-user-id");
-      const isChecked = event.target.checked;
-      const date = event.target.getAttribute("data-date"); // Получаем дату из атрибута
+  const swiper = initSwiper();
+  swiper.update();
+  swiper.navigation.update();
 
-      // Обновляем состояния в локальном хранилище для текущей даты
-      const checkboxStates = JSON.parse(localStorage.getItem("checkboxStates")) || {};
-      if (!checkboxStates[date]) {
-        checkboxStates[date] = {};
-      }
-      checkboxStates[date][userId] = isChecked;
-      localStorage.setItem("checkboxStates", JSON.stringify(checkboxStates));
-    }
-  });
-  const swiper = initSwiper()
   const targetDate = date ? date : new Date().toISOString().split("T")[0];
   const slides = document.querySelectorAll('.swiper-slide');
   const slideIndex = findSlideIndexByDate(slides, targetDate);
@@ -213,8 +209,9 @@ function processAndDisplayData(data, date) {
   if (slideIndex !== -1) {
     swiper.slideTo(slideIndex[0]);
     setCalendarDate(slideIndex[1])
-    console.log(`Перешли к слайду с индексом ${slideIndex}`);
+    console.log(`Перешли к слайду с индексом ${slideIndex[0]}`);
   } else {
     console.log('Слайды с датами не найдены');
   }
+  copyTable()
 }

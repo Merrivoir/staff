@@ -57,10 +57,25 @@ body {
   gap: 0.6rem;
 }
 
+div.nameGame {
+  display: flex;
+  align-items: center;
+}
+
 .subhead {
-  margin: 1rem auto;
+  margin: 1rem 1rem 1rem auto;
   text-align: center;
   font-size: 1.4rem;
+}
+
+.copy-button {
+  margin: 1rem auto 1rem 0;
+  cursor: pointer;
+}
+
+span.copy-button img {
+  width: 2rem;
+  height: 2rem;
 }
 
 #sync-container {
@@ -249,7 +264,9 @@ table {
 }
 
 .yellow {
-  background-color: #fcec07;
+  background-color: #fff127;
+  color: #101111;
+  font-weight: 500;
 }
 
 .green {

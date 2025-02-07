@@ -4,7 +4,8 @@ const listContainer = document.getElementById("list-container");
 const calendarInput = document.getElementById("calendar");
 const content = document.getElementById('content');
 let isProgrammaticChange = false;
-let eventDates = [];
+
+let eventDates = Object.keys(JSON.parse(localStorage.getItem('allData')));
 
 const headers = [
     { 

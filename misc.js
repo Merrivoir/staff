@@ -6,6 +6,7 @@ function mws(show = 1) {
   }
 }
 
+// ----------------------------------------------------------------------------------
 // Сортировка данных и добавление новых данных в хранилище
 function saveAndSortData(newData) {
   // Извлекаем данные из localStorage
@@ -28,6 +29,7 @@ function saveAndSortData(newData) {
   return sortedData; // Возвращаем обновлённые данные
 }
 
+// ----------------------------------------------------------------------------------
 function createTableHeader() {
   
   const headerRow = document.createElement("tr");
@@ -63,6 +65,7 @@ function createTableHeader() {
   return headerRow
 }
 
+// ----------------------------------------------------------------------------------
 function createTableUsers(users, date) {
   const tbody = document.createElement('tbody');
   const checkboxStates = JSON.parse(localStorage.getItem("checkboxStates")) || {};
@@ -134,8 +137,9 @@ function createTableUsers(users, date) {
 
 }
 
+// ----------------------------------------------------------------------------------
 // Функция добавления обработчика событий для сортировки таблиц
-function addOrdering(headerRow,tbody) {
+function handlerForSort(headerRow,tbody) {
   const headers = headerRow.querySelectorAll("th");
 
     headers.forEach(header => {
@@ -189,6 +193,7 @@ function addOrdering(headerRow,tbody) {
 
 }
 
+// ----------------------------------------------------------------------------------
 // Функция для создания ячейки таблицы
 function createDiv(content = 'cell-content') {
   const divcell = document.createElement('div');
@@ -196,6 +201,7 @@ function createDiv(content = 'cell-content') {
   return divcell
 }
 
+// ----------------------------------------------------------------------------------
 // Функция для показа уведомлений
 function showUpdateNotification(text, level=0) {
   
@@ -227,46 +233,14 @@ function showUpdateNotification(text, level=0) {
   }, 3000);
 }
 
-function saveDataToLocalStorage(data) {
-  const existingData = JSON.parse(localStorage.getItem('allData')) || {};
-  let sd = JSON.parse(localStorage.getItem('allData')) || {};
-  let ed = Object.keys(sd);
-
-  let eventDates = ed.map(dateStr => {
-  const [year, month, day] = dateStr.split('-');
-  return new Date(year, month - 1, day).toLocaleDateString('en-CA');
-});
-  const updatedData = { ...existingData, ...data };
-  localStorage.setItem('allData', JSON.stringify(updatedData));
-}
-
-function sortLocalStorage() {
-  const storedDataJSON = localStorage.getItem('allData');
-  if (storedDataJSON) {
-    const storedData = JSON.parse(storedDataJSON);
-
-    // Получаем и сортируем даты
-    const dateKeys = Object.keys(storedData).sort((a, b) => new Date(a) - new Date(b));
-    const sortedData = {};
-    // Обрабатываем данные в отсортированном порядке
-    dateKeys.forEach(dateKey => {
-      sortedData[dateKey] = storedData[dateKey];
-    });
-    localStorage.removeItem('allData');
-    localStorage.setItem('allData', JSON.stringify(sortedData));
-
-  } else {
-    console.log('Данные в localStorage отсутствуют или повреждены.');
-  }
-  return JSON.parse(localStorage.getItem('allData'))
-}
-
+// ----------------------------------------------------------------------------------
 // Функция програмной смены даты в календаре
 function setCalendarDate(dateStr) {
   isProgrammaticChange = true;
   calendarInstance.setDate(dateStr, true); // Второй параметр - форсировать обновление
 }
 
+// ----------------------------------------------------------------------------------
 // Функция для поиска ближайшей даты относительно запрошенной
 function findSlideIndexByDate(slides, targetDate) {
   let closestIndex = -1;
@@ -291,4 +265,60 @@ function findSlideIndexByDate(slides, targetDate) {
   });
 
   return [closestIndex, closestDate];
+}
+
+function copyTable() {
+  document.querySelectorAll('.list-group').forEach(function(group) {
+    // Находим заголовок внутри блока
+    var h3 = group.querySelector('div.nameGame');
+    // Создаем кнопку
+    var copyButton = document.createElement('span');
+    copyButton.classList.add('copy-button');
+    copyButton.innerHTML = '<img src="favicon/copy.svg" alt="Копировать">';
+    
+    // Обработчик события нажатия на кнопку
+    copyButton.addEventListener('click', function() {
+      // Ищем таблицу внутри данного блока
+      var table = group.querySelector('.table-container table');
+      if (!table) {
+        alert("Таблица не найдена!");
+        return;
+      }
+      
+      // Извлекаем строки из тела таблицы (без заголовков)
+      var rows = table.querySelectorAll("tbody tr");
+      var clipboardText = "";
+      
+      rows.forEach(function(row) {
+        // Из каждой строки выбираем ячейки (как th, так и td)
+        var cells = row.querySelectorAll("th, td");
+        var rowData = [];
+        // Пропускаем первую ячейку (первый столбец)
+        for (var i = 1; i < cells.length; i++) {
+          var cell = cells[i];
+          // Если ячейка содержит ссылку, берем текст ссылки
+          var link = cell.querySelector("a");
+          if (link) {
+            rowData.push(link.textContent.trim());
+          } else {
+            rowData.push(cell.innerText.trim());
+          }
+        }
+        // Собираем строку, разделяя ячейки табуляцией
+        clipboardText += rowData.join("\t") + "\n";
+      });
+      
+      // Копирование в буфер обмена через Clipboard API
+      navigator.clipboard.writeText(clipboardText)
+        .then(function() {
+          showUpdateNotification("Таблица скопирована в буфер обмена", 1);
+        })
+        .catch(function(error) {
+          alert("Ошибка копирования: " + error);
+        });
+    });
+    
+    // Вставляем кнопку сразу после заголовка <h3>
+    h3.appendChild(copyButton);
+  });
 }
